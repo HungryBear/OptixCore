@@ -9,11 +9,13 @@ namespace OptixCore.Library.Native
 {
     using RTsize = UInt64;
 
-
     [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>", Scope = "class", Target = "~M:OptixCore.Library.Native.Api")]
 
     internal unsafe class Api
     {
+
+        [DllImport("optixu.1.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+        public static extern RTresult rtuGetSizeForRTformat(RTformat format, out uint size);
         [DllImport("optix.1.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         public static extern RTresult rtGetVersion(ref uint version);
 
@@ -40,163 +42,163 @@ namespace OptixCore.Library.Native
         [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtDeviceGetDeviceCount(ref uint count);
 
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSet1f(IntPtr v, float f1);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSet2f(IntPtr v, float f1, float f2);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSet3f(IntPtr v, float f1, float f2, float f3);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSet4f(IntPtr v, float f1, float f2, float f3, float f4);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSet1fv(IntPtr v, ref float f);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSet2fv(IntPtr v, Vector2 f);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSet3fv(IntPtr v, Vector3 f);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSet4fv(IntPtr v, Vector4 f);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSet1i(IntPtr v, int i1);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSet2i(IntPtr v, int i1, int i2);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSet3i(IntPtr v, int i1, int i2, int i3);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSet4i(IntPtr v, int i1, int i2, int i3, int i4);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSet1iv(IntPtr v, ref int i);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSet2iv(IntPtr v, ref Int2 i);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSet3iv(IntPtr v, ref Int3 i);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSet4iv(IntPtr v, int* i);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSet1ui(IntPtr v, uint u1);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSet2ui(IntPtr v, uint u1, uint u2);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSet3ui(IntPtr v, uint u1, uint u2, uint u3);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSet4ui(IntPtr v, uint u1, uint u2, uint u3, uint u4);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSet1uiv(IntPtr v, ref uint u);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSet2uiv(IntPtr v, uint* u);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSet3uiv(IntPtr v, ref UInt3 u);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSet4uiv(IntPtr v, uint* u);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSetMatrix2x2fv(IntPtr v, int transpose, float* m);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSetMatrix2x3fv(IntPtr v, int transpose, float* m);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSetMatrix2x4fv(IntPtr v, int transpose, float* m);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSetMatrix3x2fv(IntPtr v, int transpose, Matrix3x2 m);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSetMatrix3x3fv(IntPtr v, int transpose, float* m);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSetMatrix3x4fv(IntPtr v, int transpose, float* m);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSetMatrix4x2fv(IntPtr v, int transpose, float* m);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSetMatrix4x3fv(IntPtr v, int transpose, float* m);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSetMatrix4x4fv(IntPtr v, int transpose, Matrix4x4 m);
 
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSetObject(IntPtr v, IntPtr @object);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableSetUserData(IntPtr v, IntPtr size, IntPtr ptr);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGet1f(IntPtr v, ref float f1);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGet2f(IntPtr v, ref float f1, ref float f2);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGet3f(IntPtr v, ref float f1, ref float f2, ref float f3);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGet4f(IntPtr v, ref float f1, ref float f2, ref float f3, ref float f4);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGet1fv(IntPtr v, ref float f);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGet2fv(IntPtr v, ref Vector2 f);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGet3fv(IntPtr v, ref Vector3 f);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGet4fv(IntPtr v, ref Vector4 f);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGet1i(IntPtr v, ref int i1);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGet2i(IntPtr v, ref int i1, ref int i2);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGet3i(IntPtr v, ref int i1, ref int i2, ref int i3);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGet4i(IntPtr v, ref int i1, ref int i2, ref int i3, ref int i4);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGet1iv(IntPtr v, ref int i);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGet2iv(IntPtr v, ref Int2 i);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGet3iv(IntPtr v, ref Int3 i);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGet4iv(IntPtr v, int* i);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGet1ui(IntPtr v, ref uint u1);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGet2ui(IntPtr v, ref uint u1, ref uint u2);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGet3ui(IntPtr v, ref uint u1, ref uint u2, ref uint u3);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGet4ui(IntPtr v, ref uint u1, ref uint u2, ref uint u3, ref uint u4);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGet1uiv(IntPtr v, uint* u);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGet2uiv(IntPtr v, uint* u);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGet3uiv(IntPtr v, ref UInt3 u);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGet4uiv(IntPtr v, uint* u);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGetMatrix2x2fv(IntPtr v, int transpose, float* m);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGetMatrix2x3fv(IntPtr v, int transpose, float* m);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGetMatrix2x4fv(IntPtr v, int transpose, float* m);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGetMatrix3x2fv(IntPtr v, int transpose, float* m);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGetMatrix3x3fv(IntPtr v, int transpose, float* m);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGetMatrix3x4fv(IntPtr v, int transpose, float* m);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGetMatrix4x2fv(IntPtr v, int transpose, float* m);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGetMatrix4x3fv(IntPtr v, int transpose, float* m);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGetMatrix4x4fv(IntPtr v, int transpose, float* m);
 
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGetObject(IntPtr v, IntPtr @object);
 
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGetUserData(IntPtr v, RTsize size, IntPtr ptr);
 
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGetName(IntPtr v, IntPtr name_return);
 
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGetAnnotation(IntPtr v, ref IntPtr annotation_return);
 
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGetType(IntPtr v, ref RTobjecttype type_return);
 
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGetContext(IntPtr v, IntPtr context);
 
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGetSize(IntPtr v, ref RTsize size);
 
         // Context------------------------------------
@@ -263,7 +265,7 @@ namespace OptixCore.Library.Native
         public static extern RTresult rtContextSetExceptionEnabled(IntPtr context, RTexception exception, int enabled);
 
         [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
-        public static extern RTresult rtContextGetExceptionEnabled(IntPtr context, RTexception exception,ref int enabled);
+        public static extern RTresult rtContextGetExceptionEnabled(IntPtr context, RTexception exception, ref int enabled);
         [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtContextSetRayTypeCount(IntPtr context, uint num_ray_types);
         [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
@@ -308,9 +310,9 @@ namespace OptixCore.Library.Native
         [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtContextGetPrintLaunchIndex(IntPtr context, ref int x, ref int y, ref int z);
         [DllImport("optix.1.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern RTresult rtContextDeclareVariable(IntPtr context, [MarshalAs(UnmanagedType.LPStr)]string name, IntPtr v);
+        public static extern RTresult rtContextDeclareVariable(IntPtr context, [MarshalAs(UnmanagedType.LPStr)]string name, out IntPtr v);
         [DllImport("optix.1.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern RTresult rtContextQueryVariable(IntPtr context, [MarshalAs(UnmanagedType.LPStr)]string name, IntPtr v);
+        public static extern RTresult rtContextQueryVariable(IntPtr context, [MarshalAs(UnmanagedType.LPStr)]string name, out IntPtr v);
         [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtContextRemoveVariable(IntPtr context, IntPtr v);
         [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
@@ -321,584 +323,584 @@ namespace OptixCore.Library.Native
 
         // Program -------
 
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
-        public static extern RTresult rtProgramCreateFromPTXString(IntPtr context, [MarshalAs(UnmanagedType.LPStr)]string ptx, [MarshalAs(UnmanagedType.LPStr)]string program_name, IntPtr program);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
-        public static extern RTresult rtProgramCreateFromPTXFile(IntPtr context, [MarshalAs(UnmanagedType.LPStr)]string filename, [MarshalAs(UnmanagedType.LPStr)]string program_name, IntPtr program);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
+        public static extern RTresult rtProgramCreateFromPTXString(IntPtr context, [MarshalAs(UnmanagedType.LPStr)]string ptx, [MarshalAs(UnmanagedType.LPStr)]string program_name, out IntPtr program);
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
+        public static extern RTresult rtProgramCreateFromPTXFile(IntPtr context, [MarshalAs(UnmanagedType.LPStr)]string filename, [MarshalAs(UnmanagedType.LPStr)]string program_name, out IntPtr program);
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtProgramDestroy(IntPtr program);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtProgramValidate(IntPtr program);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtProgramGetContext(IntPtr program, IntPtr context);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
-        public static extern RTresult rtProgramDeclareVariable(IntPtr program, [MarshalAs(UnmanagedType.LPStr)]string  name, IntPtr v);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
-        public static extern RTresult rtProgramQueryVariable(IntPtr program, [MarshalAs(UnmanagedType.LPStr)]string  name, IntPtr v);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
+        public static extern RTresult rtProgramDeclareVariable(IntPtr program, [MarshalAs(UnmanagedType.LPStr)]string name, IntPtr v);
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
+        public static extern RTresult rtProgramQueryVariable(IntPtr program, [MarshalAs(UnmanagedType.LPStr)]string name, IntPtr v);
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtProgramRemoveVariable(IntPtr program, IntPtr v);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtProgramGetVariableCount(IntPtr program, ref uint count);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtProgramGetVariable(IntPtr program, uint index, IntPtr v);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtProgramGetId(IntPtr program, ref int program_id);
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto)]
+        [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtContextGetProgramFromId(IntPtr context, int program_id, IntPtr program);
-        [DllImport("optixu.1.dll", EntryPoint = "rtGroupCreate")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGroupCreate")]
         public static extern RTresult rtGroupCreate(IntPtr context, ref IntPtr group);
-        [DllImport("optixu.1.dll", EntryPoint = "rtGroupDestroy")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGroupDestroy")]
         public static extern RTresult rtGroupDestroy(IntPtr group);
-        [DllImport("optixu.1.dll", EntryPoint = "rtGroupValidate")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGroupValidate")]
         public static extern RTresult rtGroupValidate(IntPtr group);
-        [DllImport("optixu.1.dll", EntryPoint = "rtGroupGetContext")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGroupGetContext")]
         public static extern RTresult rtGroupGetContext(IntPtr group, ref IntPtr context);
-        [DllImport("optixu.1.dll", EntryPoint = "rtGroupSetAcceleration")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGroupSetAcceleration")]
         public static extern RTresult rtGroupSetAcceleration(IntPtr group, IntPtr acceleration);
-        [DllImport("optixu.1.dll", EntryPoint = "rtGroupGetAcceleration")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGroupGetAcceleration")]
         public static extern RTresult rtGroupGetAcceleration(IntPtr group, ref IntPtr acceleration);
-        [DllImport("optixu.1.dll", EntryPoint = "rtGroupSetChildCount")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGroupSetChildCount")]
         public static extern RTresult rtGroupSetChildCount(IntPtr group, uint count);
-        [DllImport("optixu.1.dll", EntryPoint = "rtGroupGetChildCount")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGroupGetChildCount")]
         public static extern RTresult rtGroupGetChildCount(IntPtr group, ref uint count);
-        [DllImport("optixu.1.dll", EntryPoint = "rtGroupSetChild")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGroupSetChild")]
         public static extern RTresult rtGroupSetChild(IntPtr group, uint index, IntPtr child);
-        [DllImport("optixu.1.dll", EntryPoint = "rtGroupGetChild")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGroupGetChild")]
         public static extern RTresult rtGroupGetChild(IntPtr group, uint index, ref IntPtr child);
-        [DllImport("optixu.1.dll", EntryPoint = "rtGroupGetChildType")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGroupGetChildType")]
         public static extern RTresult rtGroupGetChildType(IntPtr group, uint index, ref RTobjecttype type);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtSelectorCreate")]
+        [DllImport("optix.1.dll", EntryPoint = "rtSelectorCreate")]
         public static extern RTresult rtSelectorCreate(IntPtr context, ref IntPtr selector);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtSelectorDestroy")]
+        [DllImport("optix.1.dll", EntryPoint = "rtSelectorDestroy")]
         public static extern RTresult rtSelectorDestroy(IntPtr selector);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtSelectorValidate")]
+        [DllImport("optix.1.dll", EntryPoint = "rtSelectorValidate")]
         public static extern RTresult rtSelectorValidate(IntPtr selector);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtSelectorGetContext")]
+        [DllImport("optix.1.dll", EntryPoint = "rtSelectorGetContext")]
         public static extern RTresult rtSelectorGetContext(IntPtr selector, ref IntPtr context);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtSelectorSetVisitProgram")]
+        [DllImport("optix.1.dll", EntryPoint = "rtSelectorSetVisitProgram")]
         public static extern RTresult rtSelectorSetVisitProgram(IntPtr selector, IntPtr program);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtSelectorGetVisitProgram")]
+        [DllImport("optix.1.dll", EntryPoint = "rtSelectorGetVisitProgram")]
         public static extern RTresult rtSelectorGetVisitProgram(IntPtr selector, ref IntPtr program);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtSelectorSetChildCount")]
+        [DllImport("optix.1.dll", EntryPoint = "rtSelectorSetChildCount")]
         public static extern RTresult rtSelectorSetChildCount(IntPtr selector, uint count);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtSelectorGetChildCount")]
+        [DllImport("optix.1.dll", EntryPoint = "rtSelectorGetChildCount")]
         public static extern RTresult rtSelectorGetChildCount(IntPtr selector, ref uint count);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtSelectorSetChild")]
+        [DllImport("optix.1.dll", EntryPoint = "rtSelectorSetChild")]
         public static extern RTresult rtSelectorSetChild(IntPtr selector, uint index, IntPtr child);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtSelectorGetChild")]
+        [DllImport("optix.1.dll", EntryPoint = "rtSelectorGetChild")]
         public static extern RTresult rtSelectorGetChild(IntPtr selector, uint index, ref IntPtr child);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtSelectorGetChildType")]
+        [DllImport("optix.1.dll", EntryPoint = "rtSelectorGetChildType")]
         public static extern RTresult rtSelectorGetChildType(IntPtr selector, uint index, ref RTobjecttype type);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtSelectorDeclareVariable")]
+        [DllImport("optix.1.dll", EntryPoint = "rtSelectorDeclareVariable")]
         public static extern RTresult rtSelectorDeclareVariable(IntPtr selector, [In] [MarshalAs(UnmanagedType.LPStr)] string name, ref IntPtr v);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtSelectorQueryVariable")]
+        [DllImport("optix.1.dll", EntryPoint = "rtSelectorQueryVariable")]
         public static extern RTresult rtSelectorQueryVariable(IntPtr selector, [In] [MarshalAs(UnmanagedType.LPStr)] string name, ref IntPtr v);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtSelectorRemoveVariable")]
+        [DllImport("optix.1.dll", EntryPoint = "rtSelectorRemoveVariable")]
         public static extern RTresult rtSelectorRemoveVariable(IntPtr selector, IntPtr v);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtSelectorGetVariableCount")]
+        [DllImport("optix.1.dll", EntryPoint = "rtSelectorGetVariableCount")]
         public static extern RTresult rtSelectorGetVariableCount(IntPtr selector, ref uint count);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtSelectorGetVariable")]
+        [DllImport("optix.1.dll", EntryPoint = "rtSelectorGetVariable")]
         public static extern RTresult rtSelectorGetVariable(IntPtr selector, uint index, ref IntPtr v);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtTransformCreate")]
+        [DllImport("optix.1.dll", EntryPoint = "rtTransformCreate")]
         public static extern RTresult rtTransformCreate(IntPtr context, ref IntPtr transform);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtTransformDestroy")]
+        [DllImport("optix.1.dll", EntryPoint = "rtTransformDestroy")]
         public static extern RTresult rtTransformDestroy(IntPtr transform);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtTransformValidate")]
+        [DllImport("optix.1.dll", EntryPoint = "rtTransformValidate")]
         public static extern RTresult rtTransformValidate(IntPtr transform);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtTransformGetContext")]
+        [DllImport("optix.1.dll", EntryPoint = "rtTransformGetContext")]
         public static extern RTresult rtTransformGetContext(IntPtr transform, ref IntPtr context);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtTransformSetMatrix")]
+        [DllImport("optix.1.dll", EntryPoint = "rtTransformSetMatrix")]
         public static extern RTresult rtTransformSetMatrix(IntPtr transform, int transpose, ref Matrix4x4 matrix, ref Matrix4x4 inverse_matrix);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtTransformGetMatrix")]
+        [DllImport("optix.1.dll", EntryPoint = "rtTransformGetMatrix")]
         public static extern RTresult rtTransformGetMatrix(IntPtr transform, int transpose, out Matrix4x4 matrix, out Matrix4x4 inverse_matrix);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtTransformSetChild")]
+        [DllImport("optix.1.dll", EntryPoint = "rtTransformSetChild")]
         public static extern RTresult rtTransformSetChild(IntPtr transform, IntPtr child);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtTransformGetChild")]
+        [DllImport("optix.1.dll", EntryPoint = "rtTransformGetChild")]
         public static extern RTresult rtTransformGetChild(IntPtr transform, out IntPtr child);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtTransformGetChildType")]
+        [DllImport("optix.1.dll", EntryPoint = "rtTransformGetChildType")]
         public static extern RTresult rtTransformGetChildType(IntPtr transform, ref RTobjecttype type);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryGroupCreate")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryGroupCreate")]
         public static extern RTresult rtGeometryGroupCreate(IntPtr context, ref IntPtr geometrygroup);
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryGroupDestroy")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryGroupDestroy")]
         public static extern RTresult rtGeometryGroupDestroy(IntPtr geometrygroup);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryGroupValidate")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryGroupValidate")]
         public static extern RTresult rtGeometryGroupValidate(IntPtr geometrygroup);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryGroupGetContext")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryGroupGetContext")]
         public static extern RTresult rtGeometryGroupGetContext(IntPtr geometrygroup, ref IntPtr context);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryGroupSetAcceleration")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryGroupSetAcceleration")]
         public static extern RTresult rtGeometryGroupSetAcceleration(IntPtr geometrygroup, IntPtr acceleration);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryGroupGetAcceleration")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryGroupGetAcceleration")]
         public static extern RTresult rtGeometryGroupGetAcceleration(IntPtr geometrygroup, out IntPtr acceleration);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryGroupSetChildCount")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryGroupSetChildCount")]
         public static extern RTresult rtGeometryGroupSetChildCount(IntPtr geometrygroup, uint count);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryGroupGetChildCount")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryGroupGetChildCount")]
         public static extern RTresult rtGeometryGroupGetChildCount(IntPtr geometrygroup, out uint count);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryGroupSetChild")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryGroupSetChild")]
         public static extern RTresult rtGeometryGroupSetChild(IntPtr geometrygroup, uint index, IntPtr geometryinstance);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryGroupGetChild")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryGroupGetChild")]
         public static extern RTresult rtGeometryGroupGetChild(IntPtr geometrygroup, uint index, out IntPtr geometryinstance);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtAccelerationCreate")]
+        [DllImport("optix.1.dll", EntryPoint = "rtAccelerationCreate")]
         public static extern RTresult rtAccelerationCreate(IntPtr context, ref IntPtr acceleration);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtAccelerationDestroy")]
+        [DllImport("optix.1.dll", EntryPoint = "rtAccelerationDestroy")]
         public static extern RTresult rtAccelerationDestroy(IntPtr acceleration);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtAccelerationValidate")]
+        [DllImport("optix.1.dll", EntryPoint = "rtAccelerationValidate")]
         public static extern RTresult rtAccelerationValidate(IntPtr acceleration);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtAccelerationGetContext")]
+        [DllImport("optix.1.dll", EntryPoint = "rtAccelerationGetContext")]
         public static extern RTresult rtAccelerationGetContext(IntPtr acceleration, ref IntPtr context);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtAccelerationSetBuilder")]
+        [DllImport("optix.1.dll", EntryPoint = "rtAccelerationSetBuilder")]
         public static extern RTresult rtAccelerationSetBuilder(IntPtr acceleration, [In] [MarshalAs(UnmanagedType.LPStr)] string builder);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtAccelerationGetBuilder")]
+        [DllImport("optix.1.dll", EntryPoint = "rtAccelerationGetBuilder")]
         public static extern RTresult rtAccelerationGetBuilder(IntPtr acceleration, [MarshalAs(UnmanagedType.LPStr)] out string return_string);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtAccelerationSetTraverser")]
+        [DllImport("optix.1.dll", EntryPoint = "rtAccelerationSetTraverser")]
         public static extern RTresult rtAccelerationSetTraverser(IntPtr acceleration, [In] [MarshalAs(UnmanagedType.LPStr)] string traverser);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtAccelerationGetTraverser")]
+        [DllImport("optix.1.dll", EntryPoint = "rtAccelerationGetTraverser")]
         public static extern RTresult rtAccelerationGetTraverser(IntPtr acceleration, [MarshalAs(UnmanagedType.LPStr)] out string return_string);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtAccelerationSetProperty")]
+        [DllImport("optix.1.dll", EntryPoint = "rtAccelerationSetProperty")]
         public static extern RTresult rtAccelerationSetProperty(IntPtr acceleration, [In] [MarshalAs(UnmanagedType.LPStr)] string name, [In] [MarshalAs(UnmanagedType.LPStr)] string value);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtAccelerationGetProperty")]
+        [DllImport("optix.1.dll", EntryPoint = "rtAccelerationGetProperty")]
         public static extern RTresult rtAccelerationGetProperty(IntPtr acceleration, [In] [MarshalAs(UnmanagedType.LPStr)] string name, ref IntPtr return_string);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtAccelerationGetDataSize")]
+        [DllImport("optix.1.dll", EntryPoint = "rtAccelerationGetDataSize")]
         public static extern RTresult rtAccelerationGetDataSize(IntPtr acceleration, ref uint size);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtAccelerationGetData")]
+        [DllImport("optix.1.dll", EntryPoint = "rtAccelerationGetData")]
         public static extern RTresult rtAccelerationGetData(IntPtr acceleration, IntPtr data);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtAccelerationSetData")]
+        [DllImport("optix.1.dll", EntryPoint = "rtAccelerationSetData")]
         public static extern RTresult rtAccelerationSetData(IntPtr acceleration, IntPtr data, uint size);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtAccelerationMarkDirty")]
+        [DllImport("optix.1.dll", EntryPoint = "rtAccelerationMarkDirty")]
         public static extern RTresult rtAccelerationMarkDirty(IntPtr acceleration);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtAccelerationIsDirty")]
+        [DllImport("optix.1.dll", EntryPoint = "rtAccelerationIsDirty")]
         public static extern RTresult rtAccelerationIsDirty(IntPtr acceleration, out int dirty);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryInstanceCreate")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryInstanceCreate")]
         public static extern RTresult rtGeometryInstanceCreate(IntPtr context, ref IntPtr geometryinstance);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryInstanceDestroy")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryInstanceDestroy")]
         public static extern RTresult rtGeometryInstanceDestroy(IntPtr geometryinstance);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryInstanceValidate")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryInstanceValidate")]
         public static extern RTresult rtGeometryInstanceValidate(IntPtr geometryinstance);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryInstanceGetContext")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryInstanceGetContext")]
         public static extern RTresult rtGeometryInstanceGetContext(IntPtr geometryinstance, ref IntPtr context);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryInstanceSetGeometry")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryInstanceSetGeometry")]
         public static extern RTresult rtGeometryInstanceSetGeometry(IntPtr geometryinstance, IntPtr geometry);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryInstanceGetGeometry")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryInstanceGetGeometry")]
         public static extern RTresult rtGeometryInstanceGetGeometry(IntPtr geometryinstance, out IntPtr geometry);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryInstanceSetMaterialCount")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryInstanceSetMaterialCount")]
         public static extern RTresult rtGeometryInstanceSetMaterialCount(IntPtr geometryinstance, uint count);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryInstanceGetMaterialCount")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryInstanceGetMaterialCount")]
         public static extern RTresult rtGeometryInstanceGetMaterialCount(IntPtr geometryinstance, out uint count);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryInstanceSetMaterial")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryInstanceSetMaterial")]
         public static extern RTresult rtGeometryInstanceSetMaterial(IntPtr geometryinstance, uint index, IntPtr material);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryInstanceGetMaterial")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryInstanceGetMaterial")]
         public static extern RTresult rtGeometryInstanceGetMaterial(IntPtr geometryinstance, uint index, out IntPtr material);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryInstanceDeclareVariable")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryInstanceDeclareVariable")]
         public static extern RTresult rtGeometryInstanceDeclareVariable(IntPtr geometryinstance, [In] [MarshalAs(UnmanagedType.LPStr)] string name, out IntPtr v);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryInstanceQueryVariable")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryInstanceQueryVariable")]
         public static extern RTresult rtGeometryInstanceQueryVariable(IntPtr geometryinstance, [In] [MarshalAs(UnmanagedType.LPStr)] string name, out IntPtr v);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryInstanceRemoveVariable")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryInstanceRemoveVariable")]
         public static extern RTresult rtGeometryInstanceRemoveVariable(IntPtr geometryinstance, IntPtr v);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryInstanceGetVariableCount")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryInstanceGetVariableCount")]
         public static extern RTresult rtGeometryInstanceGetVariableCount(IntPtr geometryinstance, out uint count);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryInstanceGetVariable")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryInstanceGetVariable")]
         public static extern RTresult rtGeometryInstanceGetVariable(IntPtr geometryinstance, uint index, out IntPtr v);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryCreate")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryCreate")]
         public static extern RTresult rtGeometryCreate(IntPtr context, ref IntPtr geometry);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryDestroy")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryDestroy")]
         public static extern RTresult rtGeometryDestroy(IntPtr geometry);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryValidate")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryValidate")]
         public static extern RTresult rtGeometryValidate(IntPtr geometry);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryGetContext")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryGetContext")]
         public static extern RTresult rtGeometryGetContext(IntPtr geometry, ref IntPtr context);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometrySetPrimitiveCount")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometrySetPrimitiveCount")]
         public static extern RTresult rtGeometrySetPrimitiveCount(IntPtr geometry, uint num_primitives);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryGetPrimitiveCount")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryGetPrimitiveCount")]
         public static extern RTresult rtGeometryGetPrimitiveCount(IntPtr geometry, out uint num_primitives);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometrySetPrimitiveIndexOffset")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometrySetPrimitiveIndexOffset")]
         public static extern RTresult rtGeometrySetPrimitiveIndexOffset(IntPtr geometry, uint index_offset);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryGetPrimitiveIndexOffset")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryGetPrimitiveIndexOffset")]
         public static extern RTresult rtGeometryGetPrimitiveIndexOffset(IntPtr geometry, out uint index_offset);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometrySetBoundingBoxProgram")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometrySetBoundingBoxProgram")]
         public static extern RTresult rtGeometrySetBoundingBoxProgram(IntPtr geometry, IntPtr program);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryGetBoundingBoxProgram")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryGetBoundingBoxProgram")]
         public static extern RTresult rtGeometryGetBoundingBoxProgram(IntPtr geometry, out IntPtr program);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometrySetIntersectionProgram")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometrySetIntersectionProgram")]
         public static extern RTresult rtGeometrySetIntersectionProgram(IntPtr geometry, IntPtr program);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryGetIntersectionProgram")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryGetIntersectionProgram")]
         public static extern RTresult rtGeometryGetIntersectionProgram(IntPtr geometry, out IntPtr program);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryDeclareVariable")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryDeclareVariable")]
         public static extern RTresult rtGeometryDeclareVariable(IntPtr geometry, [In] [MarshalAs(UnmanagedType.LPStr)] string name, out IntPtr v);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryQueryVariable")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryQueryVariable")]
         public static extern RTresult rtGeometryQueryVariable(IntPtr geometry, [In] [MarshalAs(UnmanagedType.LPStr)] string name, out IntPtr v);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryRemoveVariable")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryRemoveVariable")]
         public static extern RTresult rtGeometryRemoveVariable(IntPtr geometry, IntPtr v);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryGetVariableCount")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryGetVariableCount")]
         public static extern RTresult rtGeometryGetVariableCount(IntPtr geometry, out uint count);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtGeometryGetVariable")]
+        [DllImport("optix.1.dll", EntryPoint = "rtGeometryGetVariable")]
         public static extern RTresult rtGeometryGetVariable(IntPtr geometry, uint index, out IntPtr v);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtMaterialCreate")]
+        [DllImport("optix.1.dll", EntryPoint = "rtMaterialCreate")]
         public static extern RTresult rtMaterialCreate(IntPtr context, ref IntPtr material);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtMaterialDestroy")]
+        [DllImport("optix.1.dll", EntryPoint = "rtMaterialDestroy")]
         public static extern RTresult rtMaterialDestroy(IntPtr material);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtMaterialValidate")]
+        [DllImport("optix.1.dll", EntryPoint = "rtMaterialValidate")]
         public static extern RTresult rtMaterialValidate(IntPtr material);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtMaterialGetContext")]
+        [DllImport("optix.1.dll", EntryPoint = "rtMaterialGetContext")]
         public static extern RTresult rtMaterialGetContext(IntPtr material, ref IntPtr context);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtMaterialSetClosestHitProgram")]
+        [DllImport("optix.1.dll", EntryPoint = "rtMaterialSetClosestHitProgram")]
         public static extern RTresult rtMaterialSetClosestHitProgram(IntPtr material, uint ray_type_index, IntPtr program);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtMaterialGetClosestHitProgram")]
+        [DllImport("optix.1.dll", EntryPoint = "rtMaterialGetClosestHitProgram")]
         public static extern RTresult rtMaterialGetClosestHitProgram(IntPtr material, uint ray_type_index, out IntPtr program);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtMaterialSetAnyHitProgram")]
+        [DllImport("optix.1.dll", EntryPoint = "rtMaterialSetAnyHitProgram")]
         public static extern RTresult rtMaterialSetAnyHitProgram(IntPtr material, uint ray_type_index, IntPtr program);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtMaterialGetAnyHitProgram")]
+        [DllImport("optix.1.dll", EntryPoint = "rtMaterialGetAnyHitProgram")]
         public static extern RTresult rtMaterialGetAnyHitProgram(IntPtr material, uint ray_type_index, out IntPtr program);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtMaterialDeclareVariable")]
+        [DllImport("optix.1.dll", EntryPoint = "rtMaterialDeclareVariable")]
         public static extern RTresult rtMaterialDeclareVariable(IntPtr material, [In] [MarshalAs(UnmanagedType.LPStr)] string name, out IntPtr v);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtMaterialQueryVariable")]
+        [DllImport("optix.1.dll", EntryPoint = "rtMaterialQueryVariable")]
         public static extern RTresult rtMaterialQueryVariable(IntPtr material, [In] [MarshalAs(UnmanagedType.LPStr)] string name, out IntPtr v);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtMaterialRemoveVariable")]
+        [DllImport("optix.1.dll", EntryPoint = "rtMaterialRemoveVariable")]
         public static extern RTresult rtMaterialRemoveVariable(IntPtr material, IntPtr v);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtMaterialGetVariableCount")]
+        [DllImport("optix.1.dll", EntryPoint = "rtMaterialGetVariableCount")]
         public static extern RTresult rtMaterialGetVariableCount(IntPtr material, out uint count);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtMaterialGetVariable")]
+        [DllImport("optix.1.dll", EntryPoint = "rtMaterialGetVariable")]
         public static extern RTresult rtMaterialGetVariable(IntPtr material, uint index, out IntPtr v);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtTextureSamplerCreate")]
+        [DllImport("optix.1.dll", EntryPoint = "rtTextureSamplerCreate")]
         public static extern RTresult rtTextureSamplerCreate(IntPtr context, out IntPtr texturesampler);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtTextureSamplerDestroy")]
+        [DllImport("optix.1.dll", EntryPoint = "rtTextureSamplerDestroy")]
         public static extern RTresult rtTextureSamplerDestroy(IntPtr texturesampler);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtTextureSamplerValidate")]
+        [DllImport("optix.1.dll", EntryPoint = "rtTextureSamplerValidate")]
         public static extern RTresult rtTextureSamplerValidate(IntPtr texturesampler);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtTextureSamplerGetContext")]
+        [DllImport("optix.1.dll", EntryPoint = "rtTextureSamplerGetContext")]
         public static extern RTresult rtTextureSamplerGetContext(IntPtr texturesampler, ref IntPtr context);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtTextureSamplerSetWrapMode")]
+        [DllImport("optix.1.dll", EntryPoint = "rtTextureSamplerSetWrapMode")]
         public static extern RTresult rtTextureSamplerSetWrapMode(IntPtr texturesampler, uint dimension, RTwrapmode wrapmode);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtTextureSamplerGetWrapMode")]
+        [DllImport("optix.1.dll", EntryPoint = "rtTextureSamplerGetWrapMode")]
         public static extern RTresult rtTextureSamplerGetWrapMode(IntPtr texturesampler, uint dimension, ref RTwrapmode wrapmode);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtTextureSamplerSetFilteringModes")]
+        [DllImport("optix.1.dll", EntryPoint = "rtTextureSamplerSetFilteringModes")]
         public static extern RTresult rtTextureSamplerSetFilteringModes(IntPtr texturesampler, RTfiltermode minification, RTfiltermode magnification, RTfiltermode mipmapping);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtTextureSamplerGetFilteringModes")]
+        [DllImport("optix.1.dll", EntryPoint = "rtTextureSamplerGetFilteringModes")]
         public static extern RTresult rtTextureSamplerGetFilteringModes(IntPtr texturesampler, ref RTfiltermode minification, ref RTfiltermode magnification, ref RTfiltermode mipmapping);
 
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtTextureSamplerSetMaxAnisotropy")]
+        [DllImport("optix.1.dll", EntryPoint = "rtTextureSamplerSetMaxAnisotropy")]
         public static extern RTresult rtTextureSamplerSetMaxAnisotropy(IntPtr texturesampler, float value);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtTextureSamplerGetMaxAnisotropy")]
+        [DllImport("optix.1.dll", EntryPoint = "rtTextureSamplerGetMaxAnisotropy")]
         public static extern RTresult rtTextureSamplerGetMaxAnisotropy(IntPtr texturesampler, ref float value);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtTextureSamplerSetMipLevelClamp")]
+        [DllImport("optix.1.dll", EntryPoint = "rtTextureSamplerSetMipLevelClamp")]
         public static extern RTresult rtTextureSamplerSetMipLevelClamp(IntPtr texturesampler, float minLevel, float maxLevel);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtTextureSamplerGetMipLevelClamp")]
+        [DllImport("optix.1.dll", EntryPoint = "rtTextureSamplerGetMipLevelClamp")]
         public static extern RTresult rtTextureSamplerGetMipLevelClamp(IntPtr texturesampler, ref float minLevel, ref float maxLevel);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtTextureSamplerSetMipLevelBias")]
+        [DllImport("optix.1.dll", EntryPoint = "rtTextureSamplerSetMipLevelBias")]
         public static extern RTresult rtTextureSamplerSetMipLevelBias(IntPtr texturesampler, float value);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtTextureSamplerGetMipLevelBias")]
+        [DllImport("optix.1.dll", EntryPoint = "rtTextureSamplerGetMipLevelBias")]
         public static extern RTresult rtTextureSamplerGetMipLevelBias(IntPtr texturesampler, ref float value);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtTextureSamplerSetReadMode")]
+        [DllImport("optix.1.dll", EntryPoint = "rtTextureSamplerSetReadMode")]
         public static extern RTresult rtTextureSamplerSetReadMode(IntPtr texturesampler, RTtexturereadmode readmode);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtTextureSamplerGetReadMode")]
+        [DllImport("optix.1.dll", EntryPoint = "rtTextureSamplerGetReadMode")]
         public static extern RTresult rtTextureSamplerGetReadMode(IntPtr texturesampler, ref RTtexturereadmode readmode);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtTextureSamplerSetIndexingMode")]
+        [DllImport("optix.1.dll", EntryPoint = "rtTextureSamplerSetIndexingMode")]
         public static extern RTresult rtTextureSamplerSetIndexingMode(IntPtr texturesampler, RTtextureindexmode indexmode);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtTextureSamplerGetIndexingMode")]
+        [DllImport("optix.1.dll", EntryPoint = "rtTextureSamplerGetIndexingMode")]
         public static extern RTresult rtTextureSamplerGetIndexingMode(IntPtr texturesampler, ref RTtextureindexmode indexmode);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtTextureSamplerSetBuffer")]
+        [DllImport("optix.1.dll", EntryPoint = "rtTextureSamplerSetBuffer")]
         public static extern RTresult rtTextureSamplerSetBuffer(IntPtr texturesampler, uint deprecated0, uint deprecated1, IntPtr buffer);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtTextureSamplerGetBuffer")]
+        [DllImport("optix.1.dll", EntryPoint = "rtTextureSamplerGetBuffer")]
         public static extern RTresult rtTextureSamplerGetBuffer(IntPtr texturesampler, uint deprecated0, uint deprecated1, ref IntPtr buffer);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtTextureSamplerGetId")]
+        [DllImport("optix.1.dll", EntryPoint = "rtTextureSamplerGetId")]
         public static extern RTresult rtTextureSamplerGetId(IntPtr texturesampler, ref int texture_id);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtBufferCreate")]
+        [DllImport("optix.1.dll", EntryPoint = "rtBufferCreate")]
         public static extern RTresult rtBufferCreate(IntPtr context, uint bufferdesc, ref IntPtr buffer);
-        [DllImport("optixu.1.dll", EntryPoint = "rtBufferDestroy")]
+        [DllImport("optix.1.dll", EntryPoint = "rtBufferDestroy")]
         public static extern RTresult rtBufferDestroy(IntPtr buffer);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtBufferValidate")]
+        [DllImport("optix.1.dll", EntryPoint = "rtBufferValidate")]
         public static extern RTresult rtBufferValidate(IntPtr buffer);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtBufferGetContext")]
+        [DllImport("optix.1.dll", EntryPoint = "rtBufferGetContext")]
         public static extern RTresult rtBufferGetContext(IntPtr buffer, ref IntPtr context);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtBufferSetFormat")]
+        [DllImport("optix.1.dll", EntryPoint = "rtBufferSetFormat")]
         public static extern RTresult rtBufferSetFormat(IntPtr buffer, RTformat format);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtBufferGetFormat")]
+        [DllImport("optix.1.dll", EntryPoint = "rtBufferGetFormat")]
         public static extern RTresult rtBufferGetFormat(IntPtr buffer, ref RTformat format);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtBufferSetElementSize")]
+        [DllImport("optix.1.dll", EntryPoint = "rtBufferSetElementSize")]
         public static extern RTresult rtBufferSetElementSize(IntPtr buffer, uint size_of_element);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtBufferGetElementSize")]
+        [DllImport("optix.1.dll", EntryPoint = "rtBufferGetElementSize")]
         public static extern RTresult rtBufferGetElementSize(IntPtr buffer, ref uint size_of_element);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtBufferSetSize1D")]
+        [DllImport("optix.1.dll", EntryPoint = "rtBufferSetSize1D")]
         public static extern RTresult rtBufferSetSize1D(IntPtr buffer, uint width);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtBufferGetSize1D")]
+        [DllImport("optix.1.dll", EntryPoint = "rtBufferGetSize1D")]
         public static extern RTresult rtBufferGetSize1D(IntPtr buffer, ref uint width);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtBufferSetSize2D")]
+        [DllImport("optix.1.dll", EntryPoint = "rtBufferSetSize2D")]
         public static extern RTresult rtBufferSetSize2D(IntPtr buffer, uint width, uint height);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtBufferGetSize2D")]
+        [DllImport("optix.1.dll", EntryPoint = "rtBufferGetSize2D")]
         public static extern RTresult rtBufferGetSize2D(IntPtr buffer, ref uint width, ref uint height);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtBufferSetSize3D")]
+        [DllImport("optix.1.dll", EntryPoint = "rtBufferSetSize3D")]
         public static extern RTresult rtBufferSetSize3D(IntPtr buffer, uint width, uint height, uint depth);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtBufferGetSize3D")]
+        [DllImport("optix.1.dll", EntryPoint = "rtBufferGetSize3D")]
         public static extern RTresult rtBufferGetSize3D(IntPtr buffer, ref uint width, ref uint height, ref uint depth);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtBufferGetMipLevelSize1D")]
+        [DllImport("optix.1.dll", EntryPoint = "rtBufferGetMipLevelSize1D")]
         public static extern RTresult rtBufferGetMipLevelSize1D(IntPtr buffer, uint level, ref uint width);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtBufferGetMipLevelSize2D")]
+        [DllImport("optix.1.dll", EntryPoint = "rtBufferGetMipLevelSize2D")]
         public static extern RTresult rtBufferGetMipLevelSize2D(IntPtr buffer, uint level, ref uint width, ref uint height);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtBufferGetMipLevelSize3D")]
+        [DllImport("optix.1.dll", EntryPoint = "rtBufferGetMipLevelSize3D")]
         public static extern RTresult rtBufferGetMipLevelSize3D(IntPtr buffer, uint level, ref uint width, ref uint height, ref uint depth);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtBufferSetSizev")]
+        [DllImport("optix.1.dll", EntryPoint = "rtBufferSetSizev")]
         public static extern RTresult rtBufferSetSizev(IntPtr buffer, uint dimensionality, ref uint dims);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtBufferGetSizev")]
+        [DllImport("optix.1.dll", EntryPoint = "rtBufferGetSizev")]
         public static extern RTresult rtBufferGetSizev(IntPtr buffer, uint dimensionality, ref uint dims);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtBufferGetDimensionality")]
+        [DllImport("optix.1.dll", EntryPoint = "rtBufferGetDimensionality")]
         public static extern RTresult rtBufferGetDimensionality(IntPtr buffer, ref uint dimensionality);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtBufferGetMipLevelCount")]
+        [DllImport("optix.1.dll", EntryPoint = "rtBufferGetMipLevelCount")]
         public static extern RTresult rtBufferGetMipLevelCount(IntPtr buffer, ref uint level);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtBufferMap")]
+        [DllImport("optix.1.dll", EntryPoint = "rtBufferMap")]
         public static extern RTresult rtBufferMap(IntPtr buffer, ref IntPtr user_pointer);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtBufferUnmap")]
+        [DllImport("optix.1.dll", EntryPoint = "rtBufferUnmap")]
         public static extern RTresult rtBufferUnmap(IntPtr buffer);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtBufferMapEx")]
+        [DllImport("optix.1.dll", EntryPoint = "rtBufferMapEx")]
         public static extern RTresult rtBufferMapEx(IntPtr buffer, uint map_flags, uint level, IntPtr user_owned, ref IntPtr optix_owned);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtBufferUnmapEx")]
+        [DllImport("optix.1.dll", EntryPoint = "rtBufferUnmapEx")]
         public static extern RTresult rtBufferUnmapEx(IntPtr buffer, uint level);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtBufferGetId")]
+        [DllImport("optix.1.dll", EntryPoint = "rtBufferGetId")]
         public static extern RTresult rtBufferGetId(IntPtr buffer, ref int buffer_id);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtContextGetBufferFromId")]
+        [DllImport("optix.1.dll", EntryPoint = "rtContextGetBufferFromId")]
         public static extern RTresult rtContextGetBufferFromId(IntPtr context, int buffer_id, ref IntPtr buffer);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtBufferGetProgressiveUpdateReady")]
+        [DllImport("optix.1.dll", EntryPoint = "rtBufferGetProgressiveUpdateReady")]
         public static extern RTresult rtBufferGetProgressiveUpdateReady(IntPtr buffer, ref int ready, ref uint subframe_count, ref uint max_subframes);
-        [DllImport("optixu.1.dll", EntryPoint = "rtBufferBindProgressiveStream")]
+        [DllImport("optix.1.dll", EntryPoint = "rtBufferBindProgressiveStream")]
         public static extern RTresult rtBufferBindProgressiveStream(IntPtr stream, IntPtr source);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtBufferSetAttribute")]
+        [DllImport("optix.1.dll", EntryPoint = "rtBufferSetAttribute")]
         public static extern RTresult rtBufferSetAttribute(IntPtr buffer, RTbufferattribute attrib, uint size, IntPtr p);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtBufferGetAttribute")]
+        [DllImport("optix.1.dll", EntryPoint = "rtBufferGetAttribute")]
         public static extern RTresult rtBufferGetAttribute(IntPtr buffer, RTbufferattribute attrib, uint size, IntPtr p);
 
         [DllImport("optixu.1.dll", EntryPoint = "rtRemoteDeviceCreate")]

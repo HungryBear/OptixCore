@@ -78,7 +78,7 @@ namespace OptixCore.Library
             }
         }
 
-        Variable IVariableContainer.this[string name]
+        public Variable this[string name]
         {
             get
             {

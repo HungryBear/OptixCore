@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using OptixCore.Library.Native;
 
 namespace OptixCore.Library
@@ -147,5 +148,7 @@ namespace OptixCore.Library
             else
                 CheckError(Api.rtMaterialSetClosestHitProgram(InternalPtr, (uint)rayTypeIndex, program.InternalPtr));
         }
+
+ 
     }
 }

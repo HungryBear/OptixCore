@@ -36,5 +36,11 @@ namespace OptixCore.Library
         [DllImport("kernel32.dll", EntryPoint = "CopyMemory", SetLastError = false)]
         public static extern void CopyMemory(IntPtr dest, IntPtr src, uint count);
 
+        public static void MemCopy(IntPtr dest, IntPtr src, uint count)
+        {
+            byte[] data = new byte[count];
+            Marshal.Copy(src, data, 0, (int)count);
+            Marshal.Copy(data, 0, dest, (int)count);
+        }
     }
 }

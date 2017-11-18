@@ -130,7 +130,7 @@ namespace OptixCore.Library
         }
 
 
-        public void Write<T>(ref T r)
+        public void Write<T>(T r)
             where T : struct
         {
             if (!mCanWrite)
@@ -144,7 +144,9 @@ namespace OptixCore.Library
                 //throw new EndOfStreamException();
                 return;
             var l = GCHandle.Alloc(r, GCHandleType.Pinned);
-            Marshal.Copy(l.AddrOfPinnedObject(), new[] { Buffer }, (int)mPosition, sizeInBytes);
+            var rpt = IntPtr.Zero;
+            MemoryHelper.MemCopy(IntPtr.Add(Buffer, (int)mPosition), l.AddrOfPinnedObject(), (uint)sizeInBytes);
+            //Marshal.Copy(l.AddrOfPinnedObject(), new[] { Buffer }, (int)mPosition, sizeInBytes);
             mPosition += sizeInBytes;
             l.Free();
         }

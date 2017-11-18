@@ -118,6 +118,16 @@ namespace OptixCore.Library
             CheckError(Api.rtVariableSet4f(mVariable, x, y, z, w));
         }
 
+        public void Set(DataNode obj)
+        {
+            CheckError(Api.rtVariableSetObject(mVariable, obj.InternalPtr));
+        }
+
+        public void SetFloat3(ref Vector3 var)
+        {
+            CheckError(Api.rtVariableSet3fv(mVariable, var));
+        }
+
         /// <summary>
         /// Gets the type of object set on the variable
         /// </summary>

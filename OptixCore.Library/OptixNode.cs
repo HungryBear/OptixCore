@@ -22,6 +22,11 @@ namespace OptixCore.Library
             this.mContext = context;
         }
 
+        ~OptixNode()
+        {
+            Destroy();
+        }
+
         protected void CheckError(RTresult result)
         {
             if (result != RTresult.RT_SUCCESS)
@@ -35,6 +40,7 @@ namespace OptixCore.Library
         public void Dispose()
         {
             Destroy();
+            GC.SuppressFinalize(this);
         }
     }
 }

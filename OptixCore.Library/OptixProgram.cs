@@ -11,7 +11,7 @@ namespace OptixCore.Library
             {
                 throw new OptixException("Program Error: Null or Empty filename or program name");
             }
-            CheckError(Api.rtProgramCreateFromPTXFile(context.InternalPtr, fileName, programName, InternalPtr));
+            CheckError(Api.rtProgramCreateFromPTXFile(context.InternalPtr, fileName, programName,out InternalPtr));
         }
 
         public OptixProgram(Context context, IntPtr program) : base(context)

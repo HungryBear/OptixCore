@@ -140,7 +140,7 @@ namespace OptixCore.Library
                 CheckError(Api.rtBufferSetElementSize(InternalPtr, (uint)desc.ElemSize));
         }
 
-        private void SetSize(ulong width, ulong height, ulong depth)
+        protected void SetSize(ulong width, ulong height, ulong depth)
         {
             if (height <= 1 && mDepth <= 1)
                 CheckError(Api.rtBufferSetSize1D(InternalPtr, (uint)width));
@@ -193,7 +193,8 @@ namespace OptixCore.Library
             {
                 throw new OptixException("Buffer Error: Internal buffer cannot be mapped");
             }
-            MemoryHelper.CopyMemory(bufferMap, l.AddrOfPinnedObject(), size);
+            MemoryHelper.MemCopy(bufferMap, l.AddrOfPinnedObject(), size);
+            //MemoryHelper.CopyMemory(bufferMap, l.AddrOfPinnedObject(), size);
             CheckError(Api.rtBufferUnmap(InternalPtr));
             l.Free();
         }

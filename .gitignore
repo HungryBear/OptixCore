@@ -259,3 +259,18 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/OptixScripts/ScriptOutput/tutorial0.cu.ptx
+/OptixScripts/ScriptOutput/tutorial9.cu.ptx
+/OptixScripts/ScriptOutput/tutorial8.cu.ptx
+/OptixScripts/ScriptOutput/tutorial7.cu.ptx
+/OptixScripts/ScriptOutput/tutorial6.cu.ptx
+/OptixScripts/ScriptOutput/tutorial5.cu.ptx
+/OptixScripts/ScriptOutput/tutorial4.cu.ptx
+/OptixScripts/ScriptOutput/tutorial3.cu.ptx
+/OptixScripts/ScriptOutput/tutorial2.cu.ptx
+/OptixScripts/ScriptOutput/tutorial11.cu.ptx
+/OptixScripts/ScriptOutput/tutorial10.cu.ptx
+/OptixScripts/ScriptOutput/tutorial1.cu.ptx
+/OptixScripts/ScriptOutput/parallelogram.cu.ptx
+/OptixScripts/ScriptOutput/draw_texture.cu.ptx
+/OptixScripts/ScriptOutput/box.cu.ptx

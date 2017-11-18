@@ -387,7 +387,7 @@ namespace OptixCore.Library
     }   
              */
 
-        Variable IVariableContainer.this[int index]
+        public  Variable this[int index]
         {
             get
             {
@@ -422,16 +422,15 @@ namespace OptixCore.Library
             }
         }
 
-        Variable IVariableContainer.this[string name]
+        public Variable this[string name]
         {
             get
             {
 
-                var rtVar = IntPtr.Zero;
-                CheckError(Api.rtContextQueryVariable(InternalPtr, name, rtVar));
+                CheckError(Api.rtContextQueryVariable(InternalPtr, name, out var rtVar));
 
                 if (rtVar == IntPtr.Zero)
-                    CheckError(Api.rtContextDeclareVariable(InternalPtr, name, rtVar));
+                    CheckError(Api.rtContextDeclareVariable(InternalPtr, name, out rtVar));
 
                 return new Variable(this, rtVar);
             }
@@ -441,9 +440,7 @@ namespace OptixCore.Library
                 {
                     throw new ArgumentNullException(nameof(name));
                 }
-                var rtVar = IntPtr.Zero;
-
-                CheckError(Api.rtContextQueryVariable(InternalPtr, name, rtVar));
+                CheckError(Api.rtContextQueryVariable(InternalPtr, name, out var rtVar));
 
                 if (rtVar != IntPtr.Zero && value == null)
                 {
