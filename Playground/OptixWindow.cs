@@ -88,23 +88,7 @@ namespace Playground
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
-            GL.Clear(ClearBufferMask.ColorBufferBit);
-
-            // Initialize state
-            Gl.MatrixMode(MatrixMode.Projection);
-            Gl.LoadIdentity();
-            Gl.Ortho(0, 1, 0, 1, -1, 1);
-            Gl.MatrixMode(MatrixMode.Modelview);
-            Gl.LoadIdentity();
-            Gl.Viewport(0, 0, Width, Height);
-
-            Gl.ClearColor(BackBufferColor.X, BackBufferColor.Y, BackBufferColor.Z, 1);
-            Gl.Clear(ClearBufferMask.ColorBufferBit);
-
-            Display();
-
-            DrawText(15, 15, mText);
-            this.Title = mText;
+          
             //System.Threading.Thread.Sleep(10);
         }
 
@@ -145,8 +129,28 @@ namespace Playground
                 mNumRaysTraced = 0;
             }
 
+            GL.Clear(ClearBufferMask.ColorBufferBit);
+
+            // Initialize state
+            Gl.MatrixMode(MatrixMode.Projection);
+            Gl.LoadIdentity();
+            Gl.Ortho(0, 1, 0, 1, -1, 1);
+            Gl.MatrixMode(MatrixMode.Modelview);
+            Gl.LoadIdentity();
+            Gl.Viewport(0, 0, Width, Height);
+
+            Gl.ClearColor(BackBufferColor.X, BackBufferColor.Y, BackBufferColor.Z, 1);
+            Gl.Clear(ClearBufferMask.ColorBufferBit);
+
+            Display();
+            System.Threading.Thread.Sleep(10);
+
+            DrawText(15, 15, mText);
+            this.Title = mText;
+
             sw.Stop();
             mTimeDelta = (float)(sw.Elapsed.TotalSeconds);
+
         }
         protected virtual void Display()
         {
@@ -306,6 +310,18 @@ namespace Playground
                     break;
             }
         }
+
+        protected override void OnResize(EventArgs e)
+        {
+            GL.Viewport(0, 0, Width, Height);
+            GL.MatrixMode(MatrixMode.Projection);
+            GL.LoadIdentity();
+            GL.Ortho(0f, Width - 1.0f, 0f, Height - 1.0f, -1f, 1f);
+            //GL.Ortho(0f, Width - 1.0f, Height - 1.0f, 0f, -1f, 1f);
+
+            base.OnResize(e);
+        }
+
         protected void CreateOutputBuffer(Format format)
         {
             this.OutputBuffer = CreateOutputBuffer(format, Width, Height);
@@ -414,7 +430,6 @@ namespace Playground
                     throw new Exception("Unsupported format for PBO");
             }
 
-            //Gl.glTexImage2D( Gl.GL_TEXTURE_2D, 0, Gl.GL_RGBA8, Width, Height, 0, Gl.GL_BGRA, Gl.GL_UNSIGNED_BYTE, IntPtr.Zero );
 
             Gl.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
 

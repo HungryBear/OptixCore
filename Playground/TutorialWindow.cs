@@ -23,10 +23,12 @@ namespace Playground
             public Vector3 Position;
             public Vector3 Color;
             public int CastsShadow;
+#pragma warning disable 169
             int padding;      // make this structure 32 bytes -- powers of two are your friend!
+#pragma warning restore 169
         }
 
-        private static int mTutorial = 9;
+        private static int mTutorial = 10;
         private string EnvMapPath = @"G:\Depot\Source\OptixDotNet\Assets\Textures\CedarCity.png";
         private string shaderPath = GetScript($"tutorial{mTutorial}.cu.ptx");
         string boxPath = GetScript("box.cu.ptx");

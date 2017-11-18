@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OptixCore.Library", "OptixC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Playground", "Playground\Playground.csproj", "{EEBBC7D7-EA76-47CC-B909-ED97A4BF7625}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OptixScripts", "OptixScripts\EthalonOptix.vcxproj", "{9EAF5969-69B6-4478-8FBF-2CB2A1D0D275}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OptixScripts", "OptixScripts\OptixScripts.vcxproj", "{9EAF5969-69B6-4478-8FBF-2CB2A1D0D275}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
