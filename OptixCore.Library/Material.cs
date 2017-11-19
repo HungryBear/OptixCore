@@ -7,6 +7,8 @@ namespace OptixCore.Library
     {
         SurfaceProgramCollection mCollection;
 
+        public SurfaceProgramCollection Programs => mCollection;
+
         public Material(Context context) : base(context)
         {
             CheckError(Api.rtMaterialCreate(context.InternalPtr, ref InternalPtr));

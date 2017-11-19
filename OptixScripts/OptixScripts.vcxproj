@@ -271,12 +271,19 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
   <ItemGroup>
     <ClInclude Include="commonStructs.h" />
     <ClInclude Include="helpers.h" />
+    <ClInclude Include="intersection_refinement.h" />
+    <ClInclude Include="path_tracer.h" />
+    <ClInclude Include="random.h" />
     <ClInclude Include="tutorial.h" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="box.cu" />
     <CudaCompile Include="draw_texture.cu" />
     <CudaCompile Include="parallelogram.cu" />
+    <CudaCompile Include="path_tracer.cu" />
+    <CudaCompile Include="triangle_mesh.cu" />
+    <CudaCompile Include="triangle_mesh_interleaved.cu" />
+    <CudaCompile Include="triangle_mesh_iterative.cu" />
     <CudaCompile Include="tutorial0.cu" />
     <CudaCompile Include="tutorial1.cu" />
     <CudaCompile Include="tutorial10.cu" />

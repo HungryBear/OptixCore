@@ -15,6 +15,7 @@ namespace Playground
 {
     using Buffer = OptixBuffer;
 
+
     public class TutorialWindow : OptixWindow
     {
         public struct BasicLight

@@ -24,7 +24,7 @@ namespace OptixCore.Library
 
         ~OptixNode()
         {
-            Destroy();
+            //Destroy();
         }
 
         protected void CheckError(RTresult result)

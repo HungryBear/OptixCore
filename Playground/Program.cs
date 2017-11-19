@@ -18,7 +18,7 @@ namespace Playground
             //    Console.WriteLine($"Paging force-disabled {ctx.IsGpuPagingForcedlyDisabled}");
             //}
 
-            using (var window = new TutorialWindow())
+            using (var window = new PathTracerWindow())
             {
                 window.Run();
             }

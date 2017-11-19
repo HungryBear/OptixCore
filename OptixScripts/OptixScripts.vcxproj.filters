@@ -40,6 +40,12 @@
     <CudaCompile Include="tutorial11.cu">
       <Filter>Tutorial</Filter>
     </CudaCompile>
+    <CudaCompile Include="path_tracer.cu">
+      <Filter>PathTracer</Filter>
+    </CudaCompile>
+    <CudaCompile Include="triangle_mesh.cu" />
+    <CudaCompile Include="triangle_mesh_interleaved.cu" />
+    <CudaCompile Include="triangle_mesh_iterative.cu" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="commonStructs.h" />
@@ -47,10 +53,18 @@
     <ClInclude Include="tutorial.h">
       <Filter>Tutorial</Filter>
     </ClInclude>
+    <ClInclude Include="path_tracer.h">
+      <Filter>PathTracer</Filter>
+    </ClInclude>
+    <ClInclude Include="random.h" />
+    <ClInclude Include="intersection_refinement.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Tutorial">
       <UniqueIdentifier>{64afcc92-eb49-4382-abbf-2ea7063996b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PathTracer">
+      <UniqueIdentifier>{b2ee0625-e880-4d5b-a521-354b562ff0ab}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

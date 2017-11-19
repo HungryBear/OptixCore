@@ -1,15 +1,12 @@
 ﻿
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
 namespace OptixCore.Library.Native
-{
+{    
     using RTsize = UInt64;
-
-    [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>", Scope = "class", Target = "~M:OptixCore.Library.Native.Api")]
 
     internal unsafe class Api
     {
