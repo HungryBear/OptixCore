@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CudaCompile Include="box.cu" />
+    <CudaCompile Include="draw_texture.cu" />
+    <CudaCompile Include="parallelogram.cu" />
+    <CudaCompile Include="tutorial0.cu">
+      <Filter>Tutorial</Filter>
+    </CudaCompile>
+    <CudaCompile Include="tutorial1.cu">
+      <Filter>Tutorial</Filter>
+    </CudaCompile>
+    <CudaCompile Include="tutorial2.cu">
+      <Filter>Tutorial</Filter>
+    </CudaCompile>
+    <CudaCompile Include="tutorial3.cu">
+      <Filter>Tutorial</Filter>
+    </CudaCompile>
+    <CudaCompile Include="tutorial4.cu">
+      <Filter>Tutorial</Filter>
+    </CudaCompile>
+    <CudaCompile Include="tutorial5.cu">
+      <Filter>Tutorial</Filter>
+    </CudaCompile>
+    <CudaCompile Include="tutorial6.cu">
+      <Filter>Tutorial</Filter>
+    </CudaCompile>
+    <CudaCompile Include="tutorial7.cu">
+      <Filter>Tutorial</Filter>
+    </CudaCompile>
+    <CudaCompile Include="tutorial8.cu">
+      <Filter>Tutorial</Filter>
+    </CudaCompile>
+    <CudaCompile Include="tutorial9.cu">
+      <Filter>Tutorial</Filter>
+    </CudaCompile>
+    <CudaCompile Include="tutorial10.cu">
+      <Filter>Tutorial</Filter>
+    </CudaCompile>
+    <CudaCompile Include="tutorial11.cu">
+      <Filter>Tutorial</Filter>
+    </CudaCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="commonStructs.h" />
+    <ClInclude Include="helpers.h" />
+    <ClInclude Include="tutorial.h">
+      <Filter>Tutorial</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Tutorial">
+      <UniqueIdentifier>{64afcc92-eb49-4382-abbf-2ea7063996b0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

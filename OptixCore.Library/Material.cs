@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Numerics;
 using OptixCore.Library.Native;
 
 namespace OptixCore.Library
 {
-    public class Material : OptixNode, IVariableContainer
+    public class Material : VariableContainerNode
     {
         SurfaceProgramCollection mCollection;
 
@@ -21,89 +20,32 @@ namespace OptixCore.Library
             InternalPtr = mMaterial;
         }
 
-        public override void Validate()
+        protected override Func<RTresult> ValidateAction => () => Api.rtMaterialValidate(InternalPtr);
+        protected override Func<RTresult> DestroyAction => () => Api.rtMaterialDestroy(InternalPtr);
+
+        protected override Func<int, IntPtr> GetVariable => index =>
         {
-            CheckError(Api.rtMaterialValidate(InternalPtr));
-        }
+            CheckError(Api.rtMaterialGetVariable(InternalPtr, (uint)index, out var ptr));
+            return ptr;
+        };
 
-        public override void Destroy()
+        protected override Func<string, IntPtr> QueryVariable => name =>
         {
-            if (InternalPtr != IntPtr.Zero)
-                CheckError(Api.rtMaterialDestroy(InternalPtr));
-
-            InternalPtr = IntPtr.Zero;
-        }
-
-
-        public int VariableCount
+            CheckError(Api.rtMaterialQueryVariable(InternalPtr, name, out var ptr));
+            return ptr;
+        };
+        protected override Func<string, IntPtr> DeclareVariable => name =>
         {
-            get
-            {
-                CheckError(Api.rtMaterialGetVariableCount(InternalPtr, out var count));
-                return (int)count;
-            }
-        }
+            CheckError(Api.rtMaterialDeclareVariable(InternalPtr, name, out var ptr));
+            return ptr;
+        };
+        protected override Func<IntPtr, RTresult> RemoveVariable => ptr => Api.rtMaterialRemoveVariable(InternalPtr, ptr);
 
-        public Variable this[int index]
+        protected override Func<int> GetVariableCount => () =>
         {
-            get {
-                if (index < 0 || index >= VariableCount)
-                    throw new ArgumentOutOfRangeException("index");
-
-                CheckError(Api.rtMaterialGetVariable(InternalPtr, (uint)index, out var rtVar));
-
-                return new Variable(mContext, rtVar);
-            }
-            set
-            {
-                if (index < 0 || index >= VariableCount)
-                    throw new ArgumentOutOfRangeException("index");
-
-                CheckError(Api.rtMaterialGetVariable(InternalPtr, (uint)index, out var rtVar));
-
-                if (value == null)
-                {
-                    CheckError(Api.rtMaterialRemoveVariable(InternalPtr, rtVar));
-                }
-                else
-                {
-                    throw new OptixException("Material Error: Variable copying not yet implemented");
-                }
-            }
-        }
-
-        public Variable this[string name]
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(name))
-                    throw new OptixException("Material Error: Variable name is null or empty");
-
-                CheckError(Api.rtMaterialQueryVariable(InternalPtr, name, out var rtVar));
-
-                if (rtVar == IntPtr.Zero)
-                    CheckError(Api.rtMaterialDeclareVariable(InternalPtr, name, out rtVar));
-
-                return new Variable(mContext, rtVar);
-            }
-            set
-            {
-                if (string.IsNullOrEmpty(name))
-                    throw new OptixException("Material Error: Variable name is null or empty");
-
-                CheckError(Api.rtMaterialQueryVariable(InternalPtr, name, out var rtVar));
-
-                if (rtVar != IntPtr.Zero && value == null)
-                {
-                    CheckError(Api.rtMaterialRemoveVariable(InternalPtr, rtVar));
-                }
-                else
-                {
-                    if (string.IsNullOrEmpty(name))
-                        throw new OptixException("Material Error: Variable copying not yet implemented");
-                }
-            }
-        }
+            CheckError(Api.rtMaterialGetVariableCount(InternalPtr, out var count));
+            return (int)count;
+        };
 
         public void SetProgram(string name, OptixProgram @object)
         {

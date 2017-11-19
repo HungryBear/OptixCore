@@ -334,15 +334,15 @@ namespace OptixCore.Library.Native
         [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtProgramGetContext(IntPtr program, IntPtr context);
         [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
-        public static extern RTresult rtProgramDeclareVariable(IntPtr program, [MarshalAs(UnmanagedType.LPStr)]string name, IntPtr v);
+        public static extern RTresult rtProgramDeclareVariable(IntPtr program, [MarshalAs(UnmanagedType.LPStr)]string name, out IntPtr v);
         [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
-        public static extern RTresult rtProgramQueryVariable(IntPtr program, [MarshalAs(UnmanagedType.LPStr)]string name, IntPtr v);
+        public static extern RTresult rtProgramQueryVariable(IntPtr program, [MarshalAs(UnmanagedType.LPStr)]string name, out IntPtr v);
         [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtProgramRemoveVariable(IntPtr program, IntPtr v);
         [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
-        public static extern RTresult rtProgramGetVariableCount(IntPtr program, ref uint count);
+        public static extern RTresult rtProgramGetVariableCount(IntPtr program, out uint count);
         [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
-        public static extern RTresult rtProgramGetVariable(IntPtr program, uint index, IntPtr v);
+        public static extern RTresult rtProgramGetVariable(IntPtr program, uint index, out IntPtr v);
         [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtProgramGetId(IntPtr program, ref int program_id);
         [DllImport("optix.1.dll", CharSet = CharSet.Auto)]

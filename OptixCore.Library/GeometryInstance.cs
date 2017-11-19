@@ -3,7 +3,7 @@ using OptixCore.Library.Native;
 
 namespace OptixCore.Library
 {
-    public class GeometryInstance : OptixNode, IVariableContainer, IContainerNode<Material>, INodeCollectionProvider<Material>
+    public class GeometryInstance : VariableContainerNode, IContainerNode<Material>, INodeCollectionProvider<Material>
     {
         protected NodeCollection<Material> mCollection;
 
@@ -31,93 +31,35 @@ namespace OptixCore.Library
             mCollection = new NodeCollection<Material>(this);
         }
 
-        public override void Validate()
-        {
-            CheckError(Api.rtGeometryInstanceValidate(InternalPtr));
-        }
+        protected override Func<RTresult> ValidateAction=> () => Api.rtGeometryInstanceValidate(InternalPtr);
+        protected override Func<RTresult> DestroyAction => () => Api.rtGeometryInstanceDestroy(InternalPtr);
 
-        public override void Destroy()
+        protected override Func<int, IntPtr> GetVariable => index =>
         {
-            if (InternalPtr != IntPtr.Zero)
-                CheckError(Api.rtGeometryInstanceDestroy(InternalPtr));
+            CheckError(Api.rtGeometryInstanceGetVariable(InternalPtr, (uint)index, out var ptr));
+            return ptr;
+        };
+        protected override Func<string, IntPtr> QueryVariable => name =>
+        {
+            CheckError(Api.rtGeometryInstanceQueryVariable(InternalPtr, name, out var ptr));
+            return ptr;
+        };
 
-            InternalPtr = IntPtr.Zero;
-        }
+        protected override Func<string, IntPtr> DeclareVariable => name =>
+        {
+            CheckError(Api.rtGeometryInstanceDeclareVariable(InternalPtr, name, out var ptr));
+            return ptr;
+        };
+        protected override Func<IntPtr, RTresult> RemoveVariable => ptr => Api.rtGeometryInstanceRemoveVariable(InternalPtr, ptr);
+        protected override Func<int> GetVariableCount => () =>
+        {
+            CheckError(Api.rtGeometryInstanceGetVariableCount(InternalPtr, out var count));
+            return (int)count;
+        };
         public int ChildCount
         {
             get => (int)MaterialCount;
             set => MaterialCount = (uint)value;
-        }
-
-        Variable IVariableContainer.this[int index]
-        {
-            get
-            {
-                if (index < 0 || index >= VariableCount)
-                    throw new ArgumentOutOfRangeException("index");
-
-                CheckError(Api.rtGeometryInstanceGetVariable(InternalPtr, (uint)index, out var rtVar));
-
-                return new Variable(mContext, rtVar);
-            }
-            set
-            {
-                if (index < 0 || index >= VariableCount)
-                    throw new ArgumentOutOfRangeException("index");
-
-                CheckError(Api.rtGeometryInstanceGetVariable(InternalPtr, (uint)index, out var rtVar));
-
-                if (value == null)
-                {
-                    CheckError(Api.rtGeometryInstanceRemoveVariable(InternalPtr, rtVar));
-                }
-                else
-                {
-                    throw new OptixException("GeometryInstance Error: Variable copying not yet implemented");
-                }
-            }
-        }
-
-        public Variable this[string name]
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(name))
-                    throw new OptixException("GeometryInstance Error: Variable name is null or empty");
-
-                CheckError(Api.rtGeometryInstanceQueryVariable(InternalPtr, name, out var rtVar));
-
-                if (rtVar == IntPtr.Zero)
-                    CheckError(Api.rtGeometryInstanceDeclareVariable(InternalPtr, name, out rtVar));
-
-                return new Variable(mContext, rtVar);
-            }
-            set
-            {
-                if (string.IsNullOrEmpty(name))
-                    throw new OptixException("GeometryInstance Error: Variable name is null or empty");
-
-                CheckError(Api.rtGeometryInstanceQueryVariable(InternalPtr, name, out var rtVar));
-
-                if (rtVar != IntPtr.Zero && value == null)
-                {
-                    CheckError(Api.rtGeometryInstanceRemoveVariable(InternalPtr, rtVar));
-                }
-                else
-                {
-                    if (string.IsNullOrEmpty(name))
-                        throw new OptixException("GeometryInstance Error: Variable copying not yet implemented");
-                }
-            }
-        }
-
-        public int VariableCount
-        {
-            get
-            {
-                CheckError(Api.rtGeometryInstanceGetVariableCount(InternalPtr, out var count));
-                return (int)count;
-            }
         }
 
         public Geometry Geometry
@@ -130,7 +72,7 @@ namespace OptixCore.Library
             set => CheckError(Api.rtGeometryInstanceSetGeometry(InternalPtr, value.InternalPtr));
         }
 
-        public Material this[int index]
+         Material IContainerNode<Material>.this[int index]
         {
             get => GetMaterial(index);
             set => SetMaterial(index, value);

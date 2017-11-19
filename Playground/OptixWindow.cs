@@ -440,7 +440,7 @@ namespace Playground
             float u = 0.5f / Width;
             float v = 0.5f / Height;
 
-            Gl.Begin(BeginMode.Quads);
+            Gl.Begin(PrimitiveType.Quads);
             Gl.TexCoord2(u, v);
             Gl.Vertex2(0.0f, 0.0f);
             Gl.TexCoord2(1.0f, v);

@@ -1,9 +1,8 @@
 ﻿using System;
-using System.DrawingCore;
 using System.DrawingCore.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
-using OpenTK;
+
 using OptixCore.Library;
 using OptixCore.Library.Native;
 using OptixCore.Library.Scene;
@@ -34,7 +33,7 @@ namespace Playground
         string boxPath = GetScript("box.cu.ptx");
         string parrallelPath = GetScript("parallelogram.cu.ptx");
 
-        public TutorialWindow() : base(800, 600)
+        public TutorialWindow() : base(1280, 1024)
         {
         }
 
@@ -55,8 +54,8 @@ namespace Playground
             var rayGen = new OptixProgram(OptixContext, rayGenPath, mTutorial < 11 ? "pinhole_camera" : "env_camera");
             var exception = new OptixProgram(OptixContext, rayGenPath, "exception");
             var miss = new OptixProgram(OptixContext, rayGenPath, mTutorial < 5 ? "miss" : "envmap_miss");
-            //miss["bg_color"].Set(100 / 255.0f, 149 / 255.0f, 237 / 255.0f);
-            //exception["bad_color"].Set(1.0f, 0.0f, 0.0f);
+            OptixContext["bg_color"].Set(100 / 255.0f, 149 / 255.0f, 237 / 255.0f);
+            OptixContext["bad_color"].Set(1.0f, 0.0f, 0.0f);
 
             OptixContext.SetRayGenerationProgram(0, rayGen);
             OptixContext.SetExceptionProgram(0, exception);
