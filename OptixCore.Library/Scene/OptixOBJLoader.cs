@@ -188,9 +188,9 @@ namespace OptixCore.Library.Scene
 
                 int numNormIndices = normalsUseVIndices ? group.VIndices.Count : group.NIndices.Count;
 
-                BufferDesc viDesc = new BufferDesc() { Width = (uint)group.VIndices.Count, Format = Format.Int3, Type = BufferType.Input };
-                BufferDesc niDesc = new BufferDesc() { Width = (uint)numNormIndices, Format = Format.Int3, Type = BufferType.Input };
-                BufferDesc tiDesc = new BufferDesc() { Width = (uint)group.TIndices.Count, Format = Format.Int3, Type = BufferType.Input };
+                var viDesc = new BufferDesc() { Width = (uint)group.VIndices.Count, Format = Format.Int3, Type = BufferType.Input };
+                var niDesc = new BufferDesc() { Width = (uint)numNormIndices, Format = Format.Int3, Type = BufferType.Input };
+                var tiDesc = new BufferDesc() { Width = (uint)group.TIndices.Count, Format = Format.Int3, Type = BufferType.Input };
 
                 var viBuffer = new OptixBuffer(Context, viDesc);
                 var niBuffer = new OptixBuffer(Context, niDesc);
@@ -202,7 +202,7 @@ namespace OptixCore.Library.Scene
                 tiBuffer.SetData<Int3>(group.TIndices.ToArray());
 
                 //create a geometry node and set the buffers
-                Geometry geometry = new Geometry(Context);
+                var geometry = new Geometry(Context);
                 geometry.IntersectionProgram = new OptixProgram(Context, IntersecitonProgPath, IntersecitonProgName);
                 geometry.BoundingBoxProgram = new  OptixProgram(Context, BoundingBoxProgPath, BoundingBoxProgName);
                 geometry.PrimitiveCount = (uint)group.VIndices.Count;
@@ -221,7 +221,7 @@ namespace OptixCore.Library.Scene
 
                 if (group.mtrl != null)
                 {
-                    ObjMaterial mtrl = mMtrls[group.mtrl];
+                    var mtrl = mMtrls[group.mtrl];
                     instance["diffuse_color"].SetFloat3(ref mtrl.Kd);
                     instance["specular_color"].SetFloat3(ref mtrl.Ks);
                     //instance["emission_color"].SetFloat3(mtrl.Ke);
