@@ -69,26 +69,14 @@ namespace Playground
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-           // try
-            {
-                Initialize();
-
-                if (UseSRGB)
-                    Gl.Enable(EnableCap.FramebufferSrgb);
-            }
-           // catch (Exception ex)
-            {
-                //Console.WriteLine(ex.ToString());
-                //string text = string.Format("{0}\n\n{1}", ex.Message, ex.StackTrace);
-                //MessageBox.Show(text, "Exception during Optix initialization!", MessageBoxButtons.AbortRetryIgnore);
-               // Environment.Exit(0);
-            }
+            Initialize();
+            if (UseSRGB)
+                Gl.Enable(EnableCap.FramebufferSrgb);
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
-          
             //System.Threading.Thread.Sleep(10);
         }
 
@@ -373,7 +361,7 @@ namespace Playground
             {
                 size = 128;
             }
-            Gl.BufferData(BufferTarget.ArrayBuffer, new IntPtr(size * Width * Height), IntPtr.Zero,BufferUsageHint.StreamDraw);
+            Gl.BufferData(BufferTarget.ArrayBuffer, new IntPtr(size * Width * Height), IntPtr.Zero, BufferUsageHint.StreamDraw);
             Gl.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
             return pbo;

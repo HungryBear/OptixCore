@@ -29,7 +29,7 @@ namespace Playground
         }
 
         private static int mTutorial = 10;
-        private string EnvMapPath = @"G:\Depot\Source\OptixDotNet\Assets\Textures\CedarCity.png";
+        private string EnvMapPath = @"..\Assets\Textures\CedarCity.png";
         private string shaderPath = GetScript($"tutorial{mTutorial}.cu.ptx");
         string boxPath = GetScript("box.cu.ptx");
         string parrallelPath = GetScript("parallelogram.cu.ptx");

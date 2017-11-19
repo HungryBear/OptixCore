@@ -30,7 +30,7 @@ namespace Playground
             var rayGenPath = GetScript("path_tracer.cu.ptx");
             var shaderPath = GetScript("path_tracer.cu.ptx");
             var modelName = "cornell-dragon.obj";
-            var modelPath = Path.GetFullPath(@"G:\Depot\Source\OptixDotNet\Assets\Models\" + modelName);
+            var modelPath = Path.GetFullPath(@"..\Assets\Models\" + modelName);
             /*-----------------------------------------------
             * Create the Optix context
             *-----------------------------------------------*/
