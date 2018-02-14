@@ -39,7 +39,7 @@ namespace OptixCore.Library
             int num = 0;
             while ((num = source.Read(buffer, 0, buffer.Length)) != 0)
             {
-                Write(buffer, 0, num);
+                WriteRange(buffer, num, buffer.Length);
             }
 
             source.Close();
@@ -97,6 +97,13 @@ namespace OptixCore.Library
             Marshal.Copy(Buffer, dest, (int)mPosition, sizeInBytes);
             mPosition += sizeInBytes;
             l.Free();
+        }
+
+        public void WriteRange<T>(T[] triangleLight)
+            where T : struct
+
+        {
+            this.WriteRange(triangleLight, 0, triangleLight.Length);
         }
 
         public int ReadRange<T>(T[] buffer, int offset, int numElems)
@@ -240,12 +247,10 @@ namespace OptixCore.Library
             WriteRange(buffer, offset, count);
         }
 
-        public override bool CanRead { get => mCanRead; }
+        public override bool CanRead => mCanRead;
         public override bool CanSeek => true;
-        public override bool CanWrite { get => mCanWrite; }
-        public override long Length { get => mSize; }
+        public override bool CanWrite => mCanWrite;
+        public override long Length => mSize;
         public override long Position { get => mPosition; set => mPosition = value; }
     }
-
-
 }

@@ -3,8 +3,6 @@ using System.Numerics;
 
 namespace OptixCore.Library.Scene
 {
-
-
     public interface ICamera
     {
         Vector3 Position { get; set; }

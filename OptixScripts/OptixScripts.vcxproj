@@ -154,7 +154,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
-      <CodeGeneration>compute_50,sm_50</CodeGeneration>
+      <CodeGeneration>compute_52,sm_52</CodeGeneration>
       <GPUDebugInfo>false</GPUDebugInfo>
       <NvccCompilation>ptx</NvccCompilation>
       <CompileOut>ScriptOutput\%(Filename)%(Extension).ptx</CompileOut>

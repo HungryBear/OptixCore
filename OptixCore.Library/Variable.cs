@@ -128,6 +128,11 @@ namespace OptixCore.Library
             CheckError(Api.rtVariableSet3fv(mVariable, var));
         }
 
+        public void SetFloat3(Vector3 var)
+        {
+            CheckError(Api.rtVariableSet3fv(mVariable, var));
+        }
+
         /// <summary>
         /// Gets the type of object set on the variable
         /// </summary>

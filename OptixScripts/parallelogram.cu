@@ -23,6 +23,7 @@
 
 using namespace optix;
 
+
 rtDeclareVariable(float4, plane, , );
 rtDeclareVariable(float3, v1, , );
 rtDeclareVariable(float3, v2, , );

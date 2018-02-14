@@ -1,4 +1,3 @@
-
 /*
 * Copyright (c) 2008 - 2009 NVIDIA Corporation.  All rights reserved.
 *
@@ -57,6 +56,10 @@ __device__ __inline__ float luminance(const float3& rgb)
 {
 	const float3 ntsc_luminance = { 0.30f, 0.59f, 0.11f };
 	return  dot(rgb, ntsc_luminance);
+}
+
+__device__ __inline__ float rand22(){
+	return 1.0f;
 }
 
 // Maps concentric squares to concentric circles (Shirley and Chiu)
