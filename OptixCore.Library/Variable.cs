@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using OptixCore.Library.Native;
 
 namespace OptixCore.Library
@@ -70,6 +71,13 @@ namespace OptixCore.Library
             return var;
         }
 
+        public Matrix4x4 GetMatrix4x4(bool transpose = false)
+        {
+            var var = new Matrix4x4();
+            CheckError(Api.rtVariableGetMatrix4x4fv(mVariable, transpose ? 1 : 0, ref var));
+            return var;
+        }
+
         public void Set(int x)
         {
             CheckError(Api.rtVariableSet1i(mVariable, x));
@@ -116,6 +124,11 @@ namespace OptixCore.Library
         public void Set(float x, float y, float z, float w)
         {
             CheckError(Api.rtVariableSet4f(mVariable, x, y, z, w));
+        }
+
+        public void Set(ref Matrix4x4 m, bool transpose = false)
+        {
+            CheckError(Api.rtVariableSetMatrix4x4fv(mVariable, transpose ? 1 : 0, m));
         }
 
         public void Set(DataNode obj)

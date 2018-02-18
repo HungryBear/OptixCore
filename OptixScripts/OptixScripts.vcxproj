@@ -269,11 +269,15 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="camera.h" />
     <ClInclude Include="commonStructs.h" />
     <ClInclude Include="helpers.h" />
     <ClInclude Include="intersection_refinement.h" />
+    <ClInclude Include="lights.h" />
+    <ClInclude Include="math_utils.h" />
     <ClInclude Include="path_tracer.h" />
     <ClInclude Include="random.h" />
+    <ClInclude Include="scene.h" />
     <ClInclude Include="tutorial.h" />
   </ItemGroup>
   <ItemGroup>
@@ -296,6 +300,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     <CudaCompile Include="tutorial7.cu" />
     <CudaCompile Include="tutorial8.cu" />
     <CudaCompile Include="tutorial9.cu" />
+    <CudaCompile Include="vpt.cu" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,14 +1,22 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.DrawingCore;
+using System.DrawingCore.Imaging;
 using System.IO;
+using System.Linq;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
+using OpenTK.Platform;
 using OptixCore.Library;
 using OptixCore.Library.Native;
 using OptixCore.Library.Scene;
+using Bitmap = System.DrawingCore.Bitmap;
+using Color = System.DrawingCore.Color;
+using PixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
+using Rectangle = System.DrawingCore.Rectangle;
 
 namespace Playground
 {
@@ -16,6 +24,8 @@ namespace Playground
     public class OptixWindow : GameWindow
     {
         public static string ScriptsPath = @"..\OptixScripts\ScriptOutput\";
+        public static string ImageSaveDir = @"..\";
+        protected const string ImageFileTemplate = "{0}_{1}.exr";
 
         public Context OptixContext = null;
         public OptixBuffer OutputBuffer = null;
@@ -49,6 +59,9 @@ namespace Playground
             KeyDown += OptixWindow_KeyDown;
             MouseMove += OnMouseMove;
         }
+
+
+        protected virtual string ImageFileName => string.Format(ImageFileTemplate, "render", DateTime.Now.Ticks.ToString().Replace(":", "_").Replace(" ", "_").Replace("/", "_").Replace("PM", string.Empty).Trim());
 
 
         protected virtual bool IsFrameReady()
@@ -185,6 +198,34 @@ namespace Playground
         {
             if (!DrawUI)
                 return;
+
+            //Gl.MatrixMode(MatrixMode.Projection);
+            //Gl.LoadIdentity();
+            //Gl.Ortho(0, Width, 0, Height, -1, +1);
+
+            //// Save state
+            //Gl.PushAttrib(AttribMask.CurrentBit | AttribMask.EnableBit);
+
+            //Gl.Disable(Gl.GL_TEXTURE_2D);
+            //Gl.Disable(Gl.GL_LIGHTING);
+            //Gl.Disable(Gl.GL_DEPTH_TEST);
+
+
+            //Gl.Color3(.1f, .1f, .1f); // drop shadow color
+
+            //// Shift shadow one pixel to the lower right.
+            //Gl.RasterPos2(x + 1, y - 1);
+            //foreach (var c in text)
+            //    Glut.glutBitmapCharacter(Glut.GLUT_BITMAP_8_BY_13, (int)c);
+
+            //Gl.Color3(1.0f, 1.0f, 1.0f);        // main text
+            //Gl.RasterPos2(x, y);
+            //foreach (char c in text)
+            //    Glut.glutBitmapCharacter(Glut.GLUT_BITMAP_8_BY_13, (int)c);
+
+            //// Restore state
+            //Gl.PopAttrib();
+
         }
 
         protected virtual void CameraUpdate()
@@ -292,7 +333,9 @@ namespace Playground
                     Camera.Rotate(-step, 0);
                     CameraUpdate();
                     break;
-
+                case Key.F1:
+                    this.SaveImage(ImageFileName);
+                    break;
                 default:
 
                     break;
@@ -447,6 +490,89 @@ namespace Playground
             return Path.GetFullPath(string.Format("{0}\\{1}", ScriptsPath, name));
         }
 
+        protected virtual void SaveImage(string fileName, OptixBuffer outputBuffer = null)
+        {
+            if (string.IsNullOrWhiteSpace(fileName))
+                return;
+
+            var buffer = outputBuffer ?? OutputBuffer;
+            var bufferStream = buffer.Map();
+            var data = new Vector4[bufferStream.Length / 16];
+            var index = 0;
+            while (bufferStream.CanRead && index <= data.Length - 1)
+            {
+                data[index++] = bufferStream.Read<Vector4>();
+            }
+            buffer.Unmap();
+            //ImageFactory.SaveExr(fileName, Width, Height, data);
+            var bmp = new System.DrawingCore.Bitmap(Width, Height);
+            //var rect = new Rectangle(0, 0, bmp.Width, bmp.Height);
+            //var bmpData = bmp.LockBits(rect, ImageLockMode.ReadWrite, bmp.PixelFormat);
+            for (var y = 0; y < Height; y++)
+            {
+                for (var x = 0; x < Width; x++)
+                {
+                    var c = data[x + y * Width];
+                    bmp.SetPixel(x, y, ConvertColor(ref c));
+                }
+            }
+            var stats = GetStats();//string.Format("Tone map:{0}; Shadow rays {1};Max depth {2}", ToneMapping, maxShadowRays, maxDepth);
+            if (!string.IsNullOrWhiteSpace(stats))
+            {
+                ApplyWaterMark(10, Height - 8 - /*stats.Length */ 8, bmp, new[] { stats });
+            }
+
+            bmp.Save(ImageSaveDir + Path.GetFileNameWithoutExtension(fileName) + ".png");
+
+            Trace.WriteLine(fileName + " saved.");
+            bmp.Dispose();
+        }
+
+        public static void ApplyWaterMark(int x, int y, Bitmap bmp, string[] watermark)
+        {
+            if (watermark.Length == 0)
+                return;
+            try
+            {
+                int yOffset = (int)(SystemFonts.DefaultFont.SizeInPoints * 1.5f);
+                int maxLength = watermark.Max(s => s.Length);
+
+                int xWidth = (int)Math.Round(maxLength * SystemFonts.DefaultFont.SizeInPoints * 0.7);
+                int i = 0;
+                var pix = bmp.GetPixel(x, y);
+
+
+                using (var g = Graphics.FromImage(bmp))
+                {
+                    using (var textBrush = Brushes.Wheat) //new SolidBrush(textColor)
+                    {
+                        g.FillRectangle(Brushes.Black, 0, y, xWidth, y + yOffset * watermark.Length);
+                        foreach (var s in watermark)
+                        {
+                            g.DrawString(s, SystemFonts.DefaultFont, textBrush, x, Math.Min(y + i * yOffset, 719));
+                            i++;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(string.Format("Error applying watermark : "));
+                Trace.WriteLine(ex);
+            }
+        }
+        protected virtual Color ConvertColor(ref Vector4 c)
+        {
+            return Color.FromArgb(FloatToColor(c.X), FloatToColor(c.Y), FloatToColor(c.Z));
+        }
+
+        protected static byte FloatToColor(float v)
+        {
+            float f = (float)Math.Pow(v, 1 / 2.2);
+
+            f = f > 1 ? 1 : (f < 0) ? 0 : f;
+            return (byte)Math.Round(255.0f * f);
+        }
         #region Primes
         public readonly static int[] primes = new[]
             {

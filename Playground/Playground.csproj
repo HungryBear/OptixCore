@@ -20,7 +20,7 @@
       <Version>1.1.2749.6433</Version>
     </PackageReference>
     <PackageReference Include="ZKWeb.System.Drawing">
-      <Version>4.0.0</Version>
+      <Version>4.0.1</Version>
     </PackageReference>
   </ItemGroup>
 

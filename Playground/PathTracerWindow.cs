@@ -10,7 +10,7 @@ namespace Playground
 {
     using Program = OptixProgram;
 
-    public class PathTracerWindow : OptixWindow
+   public class PathTracerWindow : OptixWindow
     {
         private uint mFrame = 0;
 

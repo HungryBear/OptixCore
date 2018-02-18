@@ -175,7 +175,7 @@ namespace OptixCore.Library.Native
         [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGetMatrix4x3fv(IntPtr v, int transpose, float* m);
         [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
-        public static extern RTresult rtVariableGetMatrix4x4fv(IntPtr v, int transpose, float* m);
+        public static extern RTresult rtVariableGetMatrix4x4fv(IntPtr v, int transpose, ref Matrix4x4 m);
 
         [DllImport("optix.1.dll", CharSet = CharSet.Auto)]
         public static extern RTresult rtVariableGetObject(IntPtr v, IntPtr @object);

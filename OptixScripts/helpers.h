@@ -305,3 +305,137 @@ __device__ __inline__ float3 pow3f(float3 x, float y)
 }
 
 
+// sample hemisphere with cosine density
+
+
+__device__ __inline__ float3 sampleUnitSphere(const float2& sample)
+{
+	float z = 1.0f - 2.0f * sample.x;
+	float r = sqrtf(max(0.0f, 1.0f - z * z));
+	float phi = 2.0f * M_PIf * sample.y;
+
+	float x = cos(phi);
+	float y = sin(phi);
+
+	return make_float3(x, y, z);
+}
+
+__device__ __inline__ float3 sampleSphere(const float2& sample,
+	const float3& U,
+	const float3& V,
+	const float3& W)
+{
+	float z = 1.0f - 2.0f * sample.x;
+	float r = sqrtf(max(0.0f, 1.0f - z * z));
+	float phi = 2.0f * M_PIf * sample.y;
+
+	float x = cos(phi);
+	float y = sin(phi);
+
+	return x * U + y * V + z * W;
+}
+
+
+static __device__ __inline__ float fold(const float value)
+{
+	return fminf(value, 1.0f - value) * 2.0f;
+}
+
+
+__device__ __inline__  float sphere_phi(const float3& w)
+{
+	return M_PIf + atan2(w.y, w.x);
+}
+
+__device__ __inline__  float sphere_theta(const float3& w)
+{
+	return acosf(w.z);
+}
+
+__device__ __inline__  float cos_theta(const float3 &w)
+{
+	return w.z;
+};
+__device__ __inline__  float abs_cos_theta(const float3 &w)
+{
+	return fabsf(w.z);
+};
+__device__ __inline__  float sin_theta2(const float3 &w)
+{
+	return max(0.f, 1.f - cos_theta(w)*cos_theta(w));
+}
+
+
+__device__ __inline__  float sin_theta(const float3 &w) {
+	return sqrtf(sin_theta2(w));
+}
+
+
+__device__ __inline__  float cos_phi(const float3 &w) {
+	float sintheta = sin_theta(w);
+	if (sintheta == 0.f) return 1.f;
+	return clamp(w.x / sintheta, -1.f, 1.f);
+}
+
+__device__ __inline__  float sin_phi(const float3 &w) {
+	float sintheta = sin_theta(w);
+	if (sintheta == 0.f) return 0.f;
+	return clamp(w.y / sintheta, -1.f, 1.f);
+}
+
+__device__ __inline__ float geomFactor(const float3& p1, const float3& n1, const float3& p2, const float3& n2)
+{
+
+	float3 w = normalize(p2 - p1);
+	return (abs(dot(n1, w))*abs(dot(n2, -w))) / (length(p2 - p1)*length(p2 - p1));
+}
+
+__device__ __inline__ float __geomFactor(const float3& p1, const float3& n1, const float3& p2, const float3& n2)
+{
+	const float3 l = p2 - p1;
+	const float3 w = normalize(l);
+	const float ndl = dot(n1, w);
+	if (ndl <= 0.0f)
+	{
+		return 0.0f;
+	}
+	const float nldl = dot(n2, -w);
+	if (nldl <= 0.0f)
+	{
+		return 0.0f;
+	}
+	return (ndl*nldl) / (length(l)*length(l));
+}
+
+__device__ __inline__ bool isnan(const float3& v)
+{
+	return isnan(v.x) || isnan(v.y) || isnan(v.z);
+}
+
+__device__ __inline__ bool isFinite(const float3& v)
+{
+	return isfinite(v.x) || isfinite(v.y) || isfinite(v.z);
+}
+
+__device__ __inline__ float FrDiel(float cosi, float cost, const float etai, const float etat)
+{
+	float Rparl = ((etat * cosi) - (etai * cost)) /
+		((etat * cosi) + (etai * cost));
+	float Rperp = ((etai * cosi) - (etat * cost)) /
+		((etai * cosi) + (etat * cost));
+	return (Rparl*Rparl + Rperp * Rperp) / 2.f;
+}
+
+
+__device__ __inline__ float FrCond(float cosi, const float &eta, const float &k)
+{
+	float tmp = (eta*eta + k * k) * cosi*cosi;
+	float Rparl2 = (tmp - (2.f * eta * cosi) + 1) /
+		(tmp + (2.f * eta * cosi) + 1);
+	float tmp_f = eta * eta + k * k;
+	float Rperp2 =
+		(tmp_f - (2.f * eta * cosi) + cosi * cosi) /
+		(tmp_f + (2.f * eta * cosi) + cosi * cosi);
+	return (Rparl2 + Rperp2) / 2.f;
+}
+

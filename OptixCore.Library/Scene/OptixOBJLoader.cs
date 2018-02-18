@@ -35,7 +35,7 @@ namespace OptixCore.Library.Scene
 
         public void LoadObjData()
         {
-            this.LoadObj();
+            LoadObj();
             dataLoaded = true;
         }
 
@@ -108,7 +108,7 @@ namespace OptixCore.Library.Scene
                 tiBuffer.SetData(group.TIndices.ToArray());
 
                 //create a geometry node and set the buffers
-                Geometry geometry = new Geometry(Context);
+                var geometry = new Geometry(Context);
                 geometry.IntersectionProgram = new OptixProgram(Context, IntersecitonProgPath, IntersecitonProgName);
                 geometry.BoundingBoxProgram = new OptixProgram(Context, BoundingBoxProgPath, BoundingBoxProgName);
                 geometry.PrimitiveCount = (uint)group.VIndices.Count;
@@ -140,7 +140,7 @@ namespace OptixCore.Library.Scene
             }
 
             //create an acceleration structure for the geometry
-            Acceleration accel = new Acceleration(Context, Builder, Traverser);
+            var accel = new Acceleration(Context, Builder, Traverser);
 
             if (Builder == AccelBuilder.Sbvh || Builder == AccelBuilder.TriangleKdTree)
             {
@@ -159,21 +159,21 @@ namespace OptixCore.Library.Scene
                 return;
 
             //create buffer descriptions
-            BufferDesc vDesc = new BufferDesc() { Width = (uint)Positions.Count, Format = Format.Float3, Type = BufferType.Input };
-            BufferDesc nDesc = new BufferDesc() { Width = (uint)Normals.Count, Format = Format.Float3, Type = BufferType.Input };
-            BufferDesc tcDesc = new BufferDesc() { Width = (uint)Texcoords.Count, Format = Format.Float2, Type = BufferType.Input };
+            var vDesc = new BufferDesc { Width = (uint)Positions.Count, Format = Format.Float3, Type = BufferType.Input };
+            var nDesc = new BufferDesc { Width = (uint)Normals.Count, Format = Format.Float3, Type = BufferType.Input };
+            var tcDesc = new BufferDesc { Width = (uint)Texcoords.Count, Format = Format.Float2, Type = BufferType.Input };
 
             // Create the buffers to hold our geometry data
             var vBuffer = new OptixBuffer(Context, vDesc);
             var nBuffer = new OptixBuffer(Context, nDesc);
             var tcBuffer = new OptixBuffer(Context, tcDesc);
 
-            vBuffer.SetData<Vector3>(Positions.ToArray());
-            nBuffer.SetData<Vector3>(Normals.ToArray());
-            tcBuffer.SetData<Vector2>(Texcoords.ToArray());
+            vBuffer.SetData(Positions.ToArray());
+            nBuffer.SetData(Normals.ToArray());
+            tcBuffer.SetData(Texcoords.ToArray());
 
-            List<GeometryInstance> instances = new List<GeometryInstance>();
-            foreach (ObjGroup group in Groups)
+            var instances = new List<GeometryInstance>();
+            foreach (var group in Groups)
             {
                 //empty group
                 if (group.VIndices.Count == 0 && group.NIndices.Count == 0 && group.TIndices.Count == 0)
@@ -184,22 +184,21 @@ namespace OptixCore.Library.Scene
                 bool normalsUseVIndices = GenerateNormals && group.NIndices.Count == 0 && Normals.Count > 0;
 
                 if (normalsUseVIndices)
-                    System.Diagnostics.Debug.Assert(Normals.Count == Positions.Count);
+                    Debug.Assert(Normals.Count == Positions.Count);
 
                 int numNormIndices = normalsUseVIndices ? group.VIndices.Count : group.NIndices.Count;
 
-                var viDesc = new BufferDesc() { Width = (uint)group.VIndices.Count, Format = Format.Int3, Type = BufferType.Input };
-                var niDesc = new BufferDesc() { Width = (uint)numNormIndices, Format = Format.Int3, Type = BufferType.Input };
-                var tiDesc = new BufferDesc() { Width = (uint)group.TIndices.Count, Format = Format.Int3, Type = BufferType.Input };
+                var viDesc = new BufferDesc { Width = (uint)group.VIndices.Count, Format = Format.Int3, Type = BufferType.Input };
+                var niDesc = new BufferDesc { Width = (uint)numNormIndices, Format = Format.Int3, Type = BufferType.Input };
+                var tiDesc = new BufferDesc { Width = (uint)group.TIndices.Count, Format = Format.Int3, Type = BufferType.Input };
 
                 var viBuffer = new OptixBuffer(Context, viDesc);
                 var niBuffer = new OptixBuffer(Context, niDesc);
                 var tiBuffer = new OptixBuffer(Context, tiDesc);
 
-                viBuffer.SetData<Int3>(group.VIndices.ToArray());
-                //if normals weren't in the obj and we genereated them, use the vertex indices
-                niBuffer.SetData<Int3>(normalsUseVIndices ? group.VIndices.ToArray() : group.NIndices.ToArray());
-                tiBuffer.SetData<Int3>(group.TIndices.ToArray());
+                viBuffer.SetData(group.VIndices.ToArray());
+                niBuffer.SetData(normalsUseVIndices ? group.VIndices.ToArray() : group.NIndices.ToArray());
+                tiBuffer.SetData(group.TIndices.ToArray());
 
                 //create a geometry node and set the buffers
                 var geometry = new Geometry(Context);
@@ -215,7 +214,7 @@ namespace OptixCore.Library.Scene
                 geometry["tindex_buffer"].Set(tiBuffer);
 
                 //create a geometry instance
-                GeometryInstance instance = new GeometryInstance(Context);
+                var instance = new GeometryInstance(Context);
                 instance.Geometry = geometry;
                 instance.AddMaterial(materialResolver(group.name, group.mtrl));
 
@@ -223,19 +222,20 @@ namespace OptixCore.Library.Scene
                 {
                     var mtrl = mMtrls[group.mtrl];
                     instance["diffuse_color"].SetFloat3(ref mtrl.Kd);
-                    instance["specular_color"].SetFloat3(ref mtrl.Ks);
-                    //instance["emission_color"].SetFloat3(mtrl.Ke);
+                    instance["specular_color"].SetFloat3(ref mtrl.Kd);
+                    instance["emission_color"].SetFloat3(mtrl.Ke);
+                    instance["index_of_refraction"].Set(mtrl.Ni);
                 }
                 else
                 {
-                    instance["diffuse_color"].Set(1.0f, 1.0f, 1.0f);
+                    instance["diffuse_color"].Set(0.75f, 0.75f, 0.75f);
                 }
 
                 instances.Add(instance);
             }
 
             //create an acceleration structure for the geometry
-            Acceleration accel = new Acceleration(Context, Builder, Traverser);
+            var accel = new Acceleration(Context, Builder, Traverser);
 
             if (Builder == AccelBuilder.Sbvh || Builder == AccelBuilder.TriangleKdTree)
             {
