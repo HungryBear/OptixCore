@@ -71,7 +71,12 @@ namespace OptixCore.Library
                 return new Acceleration(mContext, accel);
             }
             set => CheckError(Api.rtGeometryGroupSetAcceleration(InternalPtr, value.InternalPtr));
+        }
 
+        public void SetAccel(Acceleration acceleration)
+        {
+            Api.rtGeometryGroupSetAcceleration(InternalPtr, acceleration.InternalPtr);
+            acceleration.MarkAsDirty();
         }
 
         public NodeCollection<GeometryInstance> Collection => mCollection;

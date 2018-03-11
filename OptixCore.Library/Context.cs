@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using OptixCore.Library.Native;
 
@@ -12,12 +14,13 @@ namespace OptixCore.Library
     public class Context : IDisposable, IVariableContainer
     {
         protected internal IntPtr InternalPtr;
-
+        private GCHandle gch;
         /// <summary>
         /// Creates an OptiX context.
         /// </summary>
         public Context()
         {
+            gch = GCHandle.Alloc(InternalPtr, GCHandleType.Pinned);
             CheckError(Api.rtContextCreate(ref InternalPtr));
             SetStackSize(1024uL);
         }
@@ -92,6 +95,7 @@ namespace OptixCore.Library
             return result;
         }
 
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         public uint RayTypeCount
         {
             get
@@ -113,6 +117,7 @@ namespace OptixCore.Library
         /// <summary>
         /// Gets or Sets the number of CPU threads Optix can use
         /// </summary>
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         public int CpuThreadsCount
         {
             get
@@ -126,6 +131,7 @@ namespace OptixCore.Library
                 RTcontextattribute.RT_CONTEXT_ATTRIBUTE_CPU_NUM_THREADS, sizeof(int), value));
         }
 
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         public bool IsGpuPagingEnabled
         {
             get
@@ -136,7 +142,7 @@ namespace OptixCore.Library
                 return active == 1;
             }
         }
-
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         public bool IsGpuPagingForcedlyDisabled
         {
             get
@@ -148,6 +154,7 @@ namespace OptixCore.Library
             }
         }
 
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         public int MaxTextureCount
         {
             get
@@ -158,7 +165,7 @@ namespace OptixCore.Library
                 return active;
             }
         }
-
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         public ulong AvailableMemory
         {
             get
@@ -190,6 +197,7 @@ namespace OptixCore.Library
             {
                 CheckError(Api.rtContextDestroy(InternalPtr));
                 InternalPtr = IntPtr.Zero;
+                gch.Free();
             }
         }
 
@@ -387,7 +395,7 @@ namespace OptixCore.Library
     }   
              */
 
-        public  Variable this[int index]
+        public Variable this[int index]
         {
             get
             {

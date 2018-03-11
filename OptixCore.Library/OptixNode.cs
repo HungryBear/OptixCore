@@ -8,6 +8,7 @@ namespace OptixCore.Library
     {
         public abstract void Validate();
         public abstract void Destroy();
+        protected GCHandle gch;
 
         public virtual void CheckError(object result)
         {

@@ -7,6 +7,7 @@
 #include "scene.h"
 #include "helpers.h"
 #include "math_utils.h"
+#include "lightsampling.h"
 
 #define PointLight 1
 #define AreaLight 2
@@ -32,9 +33,9 @@ struct LightSample
 {
 	float3 directionToLight;
 	float3 radiance;
-	float  lPdf;
-	float  ePdf;
-	float  geomTerm;
+	float  areaPdf;
+	float  emissionPdf;
+	float  cosAtLight;
 	int  isDelta, isFinite;
 };
 
@@ -47,32 +48,36 @@ struct TriangleInfo
 rtBuffer<Lightinfo>           lights;
 rtBuffer<TriangleInfo>        lightTriangles;
 rtDeclareVariable(uint, shadow_ray_type, , );
-rtDeclareVariable(unsigned int, envmapId, , );
 
-__device__ __inline__ float2 ll_map(const float3& dir)
+
+__device__ __forceinline__ int SampleIndex(const float& u0, const int max)
 {
-	float3 direction = normalize(dir);
-	float theta = atan2f(direction.x, direction.y);
-	float phi = M_PIf * 0.5f - acosf(direction.z);
-	float u = (theta + M_PIf) * (0.5f * M_1_PIf);
-	float v = 0.5f * (1.0f + sinf(phi));
-	return make_float2(u, v);
+	if (max <= 1)		return 0;
+	return int(floorf(max*u0));
 }
 
-
-__device__ __inline__ int sampleIndex(const float u0, const int imin, const int imax)
+__device__ __forceinline__ int SampleIndex(const float& u0, const int imin, const int imax)
 {
-	return imin + min(imax - imin, max(0, (int)roundf(u0*(imax - imin))));
+	return min(imax - 1, imin + SampleIndex(u0, imax - imin));
 }
 
-__device__ float3 trilight_sample_shadowray(const float3& pos, const float3& n, const Lightinfo& li, const float& u0, const float& u1, const float& u2,
-	optix::Ray& shadow_ray, float& aPdf, float& aG, float& cosAt)
+__device__ __inline__ float3 trilight_sample_shadowray(const float3& pos, const float3& n, const Lightinfo& li,
+	const float& u0, const float& u1, const float& u2,
+	optix::Ray& shadow_ray, float& aPdf, float& ePdf, float& cosAt)
 {
 	float pn = 1.0f / (float)(li.endTriangle - li.startTriangle);
-	const TriangleInfo tr = lightTriangles[sampleIndex(u0, li.startTriangle, li.endTriangle)];
-	float pa = 1.0f / tr.area;
+	const TriangleInfo tr = lightTriangles[SampleIndex(u0, li.startTriangle, li.endTriangle)];
 
+	aPdf = pn;
+	float2       aRndTuple = make_float2(u1, u2);
+	float3             oDirectionToLight;
+	float             oDistance;
 
+	float3 r = IlluminateAreaLight(tr.v0, tr.v1, tr.v2, tr.n, li.emission, pos, aRndTuple, oDirectionToLight, oDistance, aPdf, &ePdf, &cosAt);
+	shadow_ray = make_Ray(pos, oDirectionToLight, shadow_ray_type, scene_epsilon, oDistance);
+	return r;
+
+	/*
 	const float2 uv = SampleUniformTriangle(make_float2(u1, u2));
 	const float3 e1 = tr.v1 - tr.v2;
 	const float3 e2 = tr.v0 - tr.v2;
@@ -80,46 +85,56 @@ __device__ float3 trilight_sample_shadowray(const float3& pos, const float3& n, 
 	const float3 lightPoint = tr.v0 + e1 * uv.x + e2 * uv.y;
 	const float3 l = lightPoint - pos;
 
-	const float G = geomFactor(pos, n, lightPoint, tr.n);
-	cosAt = dot(n, -l);
-	aG = G;
-	if (cosAt < 0.0f) { aPdf = 0.0f; 			return make_float3(0.0f); }
+	const float distSqr = dot(l, l);
+	float  oDistance = sqrtf(distSqr);
+	float3 oDirectionToLight = oDirectionToLight / oDistance;
+
+	const float cosNormalDir = dot(n, -oDirectionToLight);
+	const float mInvArea = pa;// 1.f / length(cross(e1, e2));
+
+	if (cosAt < EPS_COSINE) 		{ aPdf = 0.0f; 			return make_float3(0.0f); }
 	float3 result = li.emission;
-	const float sqDist = length(l)*length(l);
 
-	aPdf *= pn * pa;
-	//aPdf *= pn*(pa*sqDist / cosAt);
+	aPdf = pn*mInvArea * distSqr / cosNormalDir;
+	cosAt = cosNormalDir;
+	ePdf = mInvArea * cosNormalDir * INV_PI_F;
 
-	shadow_ray = make_Ray(pos, normalize(l), shadow_ray_type, scene_epsilon, length(l) - 0.1f);
+	shadow_ray = make_Ray(pos, oDirectionToLight, pathtrace_shadow_ray_type, scene_epsilon, oDistance);
 	return result;
+	*/
 }
 
-__device__ float3 envmap_sample_shadowray(const float3& pos, const float3& n, const Lightinfo& li, const float& u0, const float& u1, optix::Ray& shadow_ray, float& aPdf)
+__device__ __inline__ float3 envmap_sample_shadowray(const float3& pos, const float3& n, const Lightinfo& li,
+	const float& u0, const float& u1,
+	optix::Ray& shadow_ray, float& aPdf, float& ePdf, float& cosAt)
 {
+	cosAt = 1.0f;
 	float oDirectPdfW = 1.0f;
 	float3 oDirectionToLight = SampleUniformSphereW(make_float2(u0, u1), &oDirectPdfW);
 	// This stays even with image sampling
-	float oDistance = scene_sphere_radius;
+	float oDistance = scene_sphere_radius * 2;
 	float oEmissionPdfW = oDirectPdfW * ConcentricDiscPdfA() * 1.0f / (scene_sphere_radius*scene_sphere_radius);
 	float2 t = ll_map(normalize(oDirectionToLight));
-	float3 lAttenuation = make_float3(rtTex2D<float4>(envmapId, t.x, t.y))*dot(n, oDirectionToLight);
+	float3 lAttenuation = make_float3(rtTex2D<float4>(li.samplerId, t.x, t.y))*abs(dot(n, oDirectionToLight));
 	shadow_ray = make_Ray(pos, normalize(oDirectionToLight), shadow_ray_type, scene_epsilon, oDistance);
-	//aPdf *= oEmissionPdfW;
+	aPdf = oDirectPdfW;
+	ePdf = oEmissionPdfW;
 	return lAttenuation;
 }
 
-__device__ float3 pointlight_sample_shadowray(const float3& pos, const float3& n, const Lightinfo& li, optix::Ray& shadow_ray, float& aPdf)
+__device__ __inline__ float3 pointlight_sample_shadowray(const float3& pos, const float3& n, const Lightinfo& li,
+	optix::Ray& shadow_ray, float& aPdf, float& ePdf, float& cosAt)
 {
 	float3 L = (li.vData - pos);
 	float nmDl = dot(n, normalize(L));
+	cosAt = 1.0f;
+	ePdf = 1.0f;
 	if (nmDl > 0.0f)
 	{
 		float Ldist = length(L);
 		shadow_ray = make_Ray(pos, normalize(L), shadow_ray_type, scene_epsilon, Ldist - scene_epsilon);
-
-		float3 lAttenuation = li.emission;
-		aPdf *= nmDl / Ldist * Ldist;
-		return (lAttenuation);
+		aPdf = nmDl / Ldist * Ldist;
+		return li.emission;
 	}
 	else {
 		aPdf = 0.0f;
@@ -127,173 +142,95 @@ __device__ float3 pointlight_sample_shadowray(const float3& pos, const float3& n
 	return make_float3(0);
 }
 
-__device__ float3 SampleSurfaceShadowRay(const float4& sample, const float3& pos, const float3& n, Ray& shadow_ray, float& aPdf, float& aG)
+__device__ __inline__ float3 SampleSurfaceShadowRay(const float4& sample, const float3& pos, const float3& n, Ray& shadow_ray, LightSample* ls, float* lightPickPdf)
 {
-	const Lightinfo li = lights[sampleIndex(sample.x, 0, lights.size() - 1)];
-	aPdf = 1.0f / lights.size();
-	aG = 1.0f;
-	float cost;
+	const Lightinfo li = lights[max(0, SampleIndex(sample.x, lights.size()))];
+	*lightPickPdf = 1.0f / float(lights.size());
 	if (li.type == AreaLight)
 	{
-		return trilight_sample_shadowray(pos, n, li, sample.x, sample.y, sample.z, shadow_ray, aPdf, aG, cost);
+		ls->isDelta = 0;
+		ls->isFinite = 1;
+		return trilight_sample_shadowray(pos, n, li, sample.x, sample.y, sample.z, shadow_ray, ls->areaPdf, ls->emissionPdf, ls->cosAtLight);
 	}
 	else
 		if (li.type == EnvMap)
 		{
-			return envmap_sample_shadowray(pos, n, li, sample.x, sample.y, shadow_ray, aPdf);
+			ls->isDelta = 0;
+			ls->isFinite = 0;
+			return envmap_sample_shadowray(pos, n, li, sample.x, sample.y, shadow_ray, ls->areaPdf, ls->emissionPdf, ls->cosAtLight);
 		}
 		else
 			if (li.type == PointLight)
 			{
-				return pointlight_sample_shadowray(pos, n, li, shadow_ray, aPdf);
+				ls->isDelta = 1;
+				ls->isFinite = 1;
+				return pointlight_sample_shadowray(pos, n, li, shadow_ray, ls->areaPdf, ls->emissionPdf, ls->cosAtLight);
 			}
-			else {
-				rtPrintf("Invalid light type");
-			}
-			return make_float3(0.0f);
+	return make_float3(0.0f);
+
 }
 
-__device__ __inline__ float3 Emit(const float2 uS, const float4 sample, float3& pos, float3& dir, float& pA, float& pE, float& cosAtLight, Lightinfo& li)
-{
-	float3 result = make_float3(0.0f);
 
-	li = lights[sampleIndex(uS.x, 0, lights.size() - 1)];
-	float aPdf = 1.0f / lights.size();
-	cosAtLight = 1.0f;
-	pE = 1.0f;
+__device__ __inline__ float3 Scene_Emit(const float u0, const float4& sample, float3& pos, float3& dir, LightSample* ls)
+{
+	const Lightinfo li = lights[SampleIndex(u0, lights.size())];
+	float lightPickPdf = 1.0f / float(lights.size());
+	float3 result = make_float3(0);
+	ls->cosAtLight = 1.0f;
 	if (li.type == AreaLight)
 	{
-		const float pn = 1.0f / (float)(li.endTriangle - li.startTriangle);
-		const TriangleInfo tr = lightTriangles[sampleIndex(uS.y, li.startTriangle, li.endTriangle)];
-		const float2 uv = SampleUniformTriangle(make_float2(sample.x, sample.y));
-		const float invArea = 1.0f / tr.area;
+		ls->isDelta = 0;
+		ls->isFinite = 1;
+		float pn = 1.0f / (float)(li.endTriangle - li.startTriangle);
+		const TriangleInfo tr = lightTriangles[SampleIndex(sample.x, li.startTriangle, li.endTriangle)];
 
-		const float3 e1 = tr.v1 - tr.v2;
-		const float3 e2 = tr.v0 - tr.v2;
+		float		aPdf = 0;
+		float2       aRndTuple = make_float2(sample.y, sample.z);
+		float2       aPosRndTuple = make_float2(sample.w, u0);
 
-		pE *= pn * invArea*aPdf;
+		result = EmitAreaLight(tr.v0, tr.v1, tr.v2, tr.n, li.emission, aRndTuple, aPosRndTuple, pos, dir, ls->emissionPdf, &aPdf, &ls->cosAtLight);
+		aPdf *= pn * lightPickPdf;
+		ls->emissionPdf *= pn * lightPickPdf;
+		ls->areaPdf = aPdf;
 
-		aPdf *= pn * invArea;
-
-		const float3 lightPoint = tr.v0 + e1 * uv.x + e2 * uv.y;
-		pos = lightPoint;
-		float3 d, v1, v2;
-		cosine_sample_hemisphere(sample.z, sample.w, d);
-		d.z = max(d.z, EPS_COSINE);
-		cosAtLight = d.z;
-		create_onb(tr.n, v1, v2);
-		dir = v1 * d.x + v2 * d.y + tr.n * d.z;
-		pA = aPdf;
-		result += li.emission*d.z;
 	}
 	else
-		if (li.type == PointLight) {
-			pos = li.vData;
-			pA = aPdf;
-			float3 d = sampleUnitSphere(make_float2(sample.x, sample.y));
-			dir = d;
-			pE = aPdf;
-			result += li.emission;
-		}
-		else if (li.type == EnvMap) {
-			float3 worldCenter = scene_sphere_center;
-			float worldRadius = scene_sphere_radius * 1.01f;
+		if (li.type == EnvMap)
+		{
+			ls->isDelta = 0;
+			ls->isFinite = 0;
 
 			float directPdf;
+			float2       aDirRndTuple = make_float2(sample.x, sample.y);
+			float2       aPosRndTuple = make_float2(sample.z, sample.w);
 
-			dir = SampleUniformSphereW(make_float2(uS.y, sample.x), &directPdf);
+			// Replace these two lines with image sampling
+			float3 oDirection = SampleUniformSphereW(aDirRndTuple, &directPdf);
+			const float2 xy = SampleConcentricDisc(aPosRndTuple);
+			Frame frame = Frame(oDirection);
 
-			Frame frame(dir);
-			float2 xy = SampleConcentricDisc(make_float2(sample.y, sample.z));
+			pos = scene_sphere_center + scene_sphere_radius * (-oDirection + frame.mX*xy.x + frame.mY*xy.y);
+			dir = oDirection;
+			float2 t = ll_map(normalize(oDirection));
+			result = make_float3(rtTex2D<float4>(li.samplerId, t.x, t.y));
 
-			pos = worldCenter + worldRadius * (-dir + frame.mX*xy.x + frame.mY*xy.y);
+			ls->emissionPdf = directPdf * lightPickPdf*ConcentricDiscPdfA()*(1.0f / (scene_sphere_radius*scene_sphere_radius));
+			ls->areaPdf = lightPickPdf * directPdf;
 
-			pE = directPdf * aPdf*ConcentricDiscPdfA()*(1.0f / worldRadius);
-			pA = aPdf;
 
-			float2 t = ll_map(normalize(dir));
-			float3 lAttenuation = make_float3(rtTex2D<float4>(1, t.x, t.y));
-			pE *= luminanceCIE(lAttenuation);
-			result += lAttenuation;
 		}
-
-		//else
-
-		return result;
-}
-
-__device__ __inline__ float3 sampleLights(const float4 sample, float3& pos, float3& dir, float& pA, float& pE)
-{
-	float3 result = make_float3(0.0f);
-
-	const Lightinfo li = lights[sampleIndex(sample.x, 0, lights.size() - 1)];
-	float aPdf = 1.0f / lights.size();
-
-
-	if (li.type == AreaLight)
-	{
-		float pn = 1.0f / (float)(li.endTriangle - li.startTriangle);
-		const TriangleInfo tr = lightTriangles[sampleIndex(sample.y, li.startTriangle, li.endTriangle)];
-		const float2 uv = SampleUniformTriangle(make_float2(sample.z, sample.w));
-		const float3 e1 = tr.v1 - tr.v2;
-		const float3 e2 = tr.v0 - tr.v2;
-		aPdf *= pn;
-		const float3 lightPoint = tr.v0 + e1 * uv.x + e2 * uv.y;
-		pos = lightPoint;
-		float3 d, v1, v2;
-		cosine_sample_hemisphere(sample.w, 1.0f - sample.y, d);
-		create_onb(tr.n, v1, v2);
-		dir = v1 * d.x + v2 * d.y + tr.n * d.z;
-
-		float RdotN = dot(dir, tr.n);
-		if (RdotN < 0.f)
+		else if (li.type == PointLight)
 		{
-			dir *= -1.f;
-			RdotN = -RdotN;
-		}
+			ls->isDelta = 1;
+			ls->isFinite = 1;
 
-
-		float A = length(cross(tr.v1 - tr.v2, tr.v0 - tr.v2));
-		pA = (RdotN / M_PIf)*(1.0f / A);
-		pE = aPdf;
-		result += (li.emission / ((1.0f / A)*(RdotN / M_PIf)))*aPdf;
-	}
-	else
-		if (li.type == PointLight) {
 			pos = li.vData;
-			pA = 1.0f;
-
-			float3 d = sampleUnitSphere(make_float2(sample.y, sample.z));
-			dir = d;
-			pE = aPdf;
-			result += li.emission*M_PIf*4.0f*aPdf;
+			float directPdf;
+			float2       aDirRndTuple = make_float2(sample.x, sample.y);
+			dir = SampleUniformSphereW(aDirRndTuple, &directPdf);
+			ls->areaPdf = lightPickPdf;
+			ls->emissionPdf = directPdf * lightPickPdf;
+			result = li.emission;
 		}
-		else if (li.type == EnvMap) {
-			float3 worldCenter = scene_sphere_center;
-			float worldRadius = scene_sphere_radius * 1.01f;
-
-			float3 p1 = worldCenter + worldRadius * sampleUnitSphere(make_float2(sample.x, sample.y));
-			float3 p2 = worldCenter + worldRadius * sampleUnitSphere(make_float2(sample.z, sample.w));
-
-			pos = p1;
-			dir = p2;
-			float3 toCenter = normalize(worldCenter - p1);
-			float costheta = abs(dot(toCenter, p2));
-			if (costheta < 0.00001f)
-			{
-				costheta = 1.0f;
-			}
-			pA = costheta;
-			pE = aPdf;
-
-			float2 t = ll_map(p2);
-			float3 lAttenuation = make_float3(rtTex2D<float4>(1, t.x, t.y));
-			result = lAttenuation / (costheta / (4.0f*M_PIf*worldRadius*worldRadius));
-		}
-
-		//else
-
-		return result;
+	return result;
 }
-
-

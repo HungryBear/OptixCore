@@ -102,8 +102,10 @@ namespace OptixCore.Library
         AccelTraverser mTraverser;
 
         public Acceleration(Context context, AccelBuilder mBuilder, AccelTraverser mTraverser) : base(context)
-        {           
+        {
             CheckError(Api.rtAccelerationCreate(context.InternalPtr, ref InternalPtr));
+            GCHandle.Alloc(InternalPtr, GCHandleType.Pinned);
+
             Builder = mBuilder;
             Traverser = mTraverser;
 
@@ -131,6 +133,7 @@ namespace OptixCore.Library
                 CheckError(Api.rtAccelerationDestroy(InternalPtr));
 
             InternalPtr = IntPtr.Zero;
+            gch.Free();
         }
 
         public void MarkAsDirty()

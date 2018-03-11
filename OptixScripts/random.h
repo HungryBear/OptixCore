@@ -88,26 +88,6 @@ __host__ __inline__ unsigned int mwc()
 	return static_cast<unsigned int>(r[0]);
 }
 
-__host__ __inline__ unsigned int random1u()
-{
-#if 0
-	return rand();
-#else
-	return mwc();
-#endif
-}
-
-__host__ __inline__ optix::uint2 random2u()
-{
-	return optix::make_uint2(random1u(), random1u());
-}
-
-__host__ __inline__ void fillRandBuffer(unsigned int *seeds, unsigned int N)
-{
-	for (unsigned int i = 0; i<N; ++i)
-		seeds[i] = mwc();
-}
-
 __host__ __device__ __inline__ unsigned int rot_seed(unsigned int seed, unsigned int frame)
 {
 	return seed ^ frame;

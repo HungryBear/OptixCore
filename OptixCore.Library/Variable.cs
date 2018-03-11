@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using OptixCore.Library.Native;
@@ -88,6 +89,8 @@ namespace OptixCore.Library
         }
         public void Set(float x)
         {
+            if (float.IsNaN(x) || float.IsInfinity(x))
+                Console.WriteLine("Invalid variable value!!!");
             CheckError(Api.rtVariableSet1f(mVariable, x));
         }
 
@@ -132,6 +135,11 @@ namespace OptixCore.Library
         }
 
         public void Set(DataNode obj)
+        {
+            CheckError(Api.rtVariableSetObject(mVariable, obj.InternalPtr));
+        }
+
+        public void Set(OptixNode obj)
         {
             CheckError(Api.rtVariableSetObject(mVariable, obj.InternalPtr));
         }

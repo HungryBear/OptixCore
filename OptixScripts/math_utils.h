@@ -275,3 +275,13 @@ __device__ __forceinline__ float sqr(const float c)
 {
 	return c * c;
 }
+
+__device__ __inline__ float2 ll_map(const float3& dir)
+{
+	float3 direction = normalize(dir);
+	float theta = atan2f(direction.x, direction.y);
+	float phi = M_PIf * 0.5f - acosf(direction.z);
+	float u = (theta + M_PIf) * (0.5f * M_1_PIf);
+	float v = 0.5f * (1.0f + sinf(phi));
+	return make_float2(u, v);
+}

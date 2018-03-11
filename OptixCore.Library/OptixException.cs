@@ -20,5 +20,10 @@ namespace OptixCore.Library
         protected OptixException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
+
+        public override string ToString()
+        {
+            return $"{Message} {StackTrace}";
+        }
     }
 }

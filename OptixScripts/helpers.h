@@ -1,26 +1,12 @@
-/*
-* Copyright (c) 2008 - 2009 NVIDIA Corporation.  All rights reserved.
-*
-* NVIDIA Corporation and its licensors retain all intellectual property and proprietary
-* rights in and to this software, related documentation and any modifications thereto.
-* Any use, reproduction, disclosure or distribution of this software and related
-* documentation without an express license agreement from NVIDIA Corporation is strictly
-* prohibited.
-*
-* TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THIS SOFTWARE IS PROVIDED *AS IS*
-* AND NVIDIA AND ITS SUPPLIERS DISCLAIM ALL WARRANTIES, EITHER EXPRESS OR IMPLIED,
-* INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-* PARTICULAR PURPOSE.  IN NO EVENT SHALL NVIDIA OR ITS SUPPLIERS BE LIABLE FOR ANY
-* SPECIAL, INCIDENTAL, INDIRECT, OR CONSEQUENTIAL DAMAGES WHATSOEVER (INCLUDING, WITHOUT
-* LIMITATION, DAMAGES FOR LOSS OF BUSINESS PROFITS, BUSINESS INTERRUPTION, LOSS OF
-* BUSINESS INFORMATION, OR ANY OTHER PECUNIARY LOSS) ARISING OUT OF THE USE OF OR
-* INABILITY TO USE THIS SOFTWARE, EVEN IF NVIDIA HAS BEEN ADVISED OF THE POSSIBILITY OF
-* SUCH DAMAGES
-*/
-
 #pragma once
 
 #include <optix_math.h>
+
+template<typename T>
+static __device__ __forceinline__ int sign(T val)
+{
+	return (T(0) < val) - (val < T(0));
+}
 
 // Convert a float3 in [0,1)^3 to a uchar4 in [0,255]^4 -- 4th channel is set to 255
 #ifdef __CUDACC__
@@ -51,15 +37,16 @@ __device__ __inline__ uchar4 rgba_to_bgra(const uchar4& c)
 }
 #endif
 
+__device__ __inline__ float radians(float f)
+{
+	return (f*M_PIf / 180.0f);
+}
+
 // Calculate the luminance value of an rgb triple
 __device__ __inline__ float luminance(const float3& rgb)
 {
 	const float3 ntsc_luminance = { 0.30f, 0.59f, 0.11f };
 	return  dot(rgb, ntsc_luminance);
-}
-
-__device__ __inline__ float rand22(){
-	return 1.0f;
 }
 
 // Maps concentric squares to concentric circles (Shirley and Chiu)
@@ -145,6 +132,41 @@ __host__ __device__ __inline__ float3 sample_phong_lobe(float2 sample, float exp
 	return x * U + y * V + z * W;
 }
 
+static
+__host__ __device__ __inline__ optix::float3 sample_phong_lobe(const optix::float2 &sample, float exponent,
+	const optix::float3 &U, const optix::float3 &V, const optix::float3 &W,
+	float &pdf, float &bdf_val)
+{
+	const float cos_theta = powf(sample.y, 1.0f / (exponent + 1.0f));
+
+	const float phi = sample.x * 2.0f * M_PIf;
+	const float sin_theta = sqrtf(1.0f - cos_theta * cos_theta);
+
+	const float x = cosf(phi)*sin_theta;
+	const float y = sinf(phi)*sin_theta;
+	const float z = cos_theta;
+
+	const float powered_cos = powf(cos_theta, exponent);
+	pdf = (exponent + 1.0f) / (2.0f*M_PIf) * powered_cos;
+	bdf_val = (exponent + 2.0f) / (2.0f*M_PIf) * powered_cos;
+
+	return x * U + y * V + z * W;
+}
+
+// Create ONB from normalalized vector
+__device__ __inline__ void createONB(const optix::float3& n,
+	optix::float3& U,
+	optix::float3& V)
+{
+	using namespace optix;
+
+	U = cross(n, make_float3(0.0f, 1.0f, 0.0f));
+	if (dot(U, U) < 1.e-3f)
+		U = cross(n, make_float3(1.0f, 0.0f, 0.0f));
+	U = normalize(U);
+	V = cross(n, U);
+}
+
 // Create ONB from normal.  Resulting W is parallel to normal
 __host__ __device__ __inline__ void create_onb(const float3& n, float3& U, float3& V, float3& W)
 {
@@ -227,13 +249,7 @@ __host__ __device__ __inline__ float3 Yxy2XYZ(const float3& Yxy)
 		(1.0f - Yxy.y - Yxy.z) * (Yxy.x / Yxy.z));
 }
 
-__host__ __device__ __inline__ float3 XYZ2rgb(const float3& xyz)
-{
-	const float R = dot(xyz, make_float3(3.2410f, -1.5374f, -0.4986f));
-	const float G = dot(xyz, make_float3(-0.9692f, 1.8760f, 0.0416f));
-	const float B = dot(xyz, make_float3(0.0556f, -0.2040f, 1.0570f));
-	return make_float3(R, G, B);
-}
+
 
 __host__ __device__ __inline__ float3 Yxy2rgb(float3 Yxy)
 {
@@ -262,6 +278,89 @@ __host__ __device__ __inline__ float3 rgb2Yxy(float3 rgb)
 		Y / (X + Y + Z));
 }
 
+__device__ __inline__ float3 RgbToXyz(const float3& p) {
+	float3 rgb = p;
+	if (rgb.x <= 0.04045f)
+	{
+		rgb.x /= 12.92f;
+	}
+	else {
+		rgb.x = powf((rgb.x + 0.055f) / 1.055f, 2.2f);
+	}
+
+	if (rgb.y <= 0.04045f)
+	{
+		rgb.y /= 12.92f;
+	}
+	else {
+		rgb.y = powf((rgb.y + 0.055f) / 1.055f, 2.2f);
+	}
+
+	if (rgb.z <= 0.04045f)
+	{
+		rgb.z /= 12.92f;
+	}
+	else {
+		rgb.z = powf((rgb.z + 0.055f) / 1.055f, 2.2f);
+	}
+	float3 xyz;
+	xyz.x = 0.412453f*rgb.x + 0.357580f*rgb.y + 0.180423f*rgb.z;
+	xyz.y = 0.212671f*rgb.x + 0.715160f*rgb.y + 0.072169f*rgb.z;
+	xyz.z = 0.019334f*rgb.x + 0.119193f*rgb.y + 0.950227f*rgb.z;
+	return xyz;
+}
+
+__host__ __device__ __inline__ float3 XyzToRgb(const float3& xyz)
+{
+	float R = dot(xyz, make_float3(3.2410f, -1.5374f, -0.4986f));
+	float G = dot(xyz, make_float3(-0.9692f, 1.8760f, 0.0416f));
+	float B = dot(xyz, make_float3(0.0556f, -0.2040f, 1.0570f));
+
+	if (R <= 0.0031308f) {
+		R *= 12.92f;
+	}
+	else {
+		R = powf(1.055f*R, 1.0f / 2.2f) - 0.055f;
+	}
+
+	if (G <= 0.0031308f) {
+		G *= 12.92f;
+	}
+	else {
+		G = powf(1.055f*G, 1.0f / 2.2f) - 0.055f;
+	}
+
+	if (B <= 0.0031308f) {
+		B *= 12.92f;
+	}
+	else {
+		B = powf(1.055f*B, 1.0f / 2.2f) - 0.055f;
+	}
+	return make_float3(R, G, B);
+}
+
+
+__device__ __inline__ float3 RGB2XYZ(const float3& rgb) {
+	float3 xyz;
+	xyz.x = 0.412453f*rgb.x + 0.357580f*rgb.y + 0.180423f*rgb.z;
+	xyz.y = 0.212671f*rgb.x + 0.715160f*rgb.y + 0.072169f*rgb.z;
+	xyz.z = 0.019334f*rgb.x + 0.119193f*rgb.y + 0.950227f*rgb.z;
+	return xyz;
+}
+
+__host__ __device__ __inline__ float3 XYZ2Yxy(const float3& xyz)
+{
+	return make_float3(xyz.y, xyz.x / (xyz.x + xyz.y + xyz.z), xyz.y / (xyz.x + xyz.y + xyz.z));
+}
+
+__host__ __device__ __inline__ float3 XYZ2rgb(const float3& xyz)
+{
+	const float R = dot(xyz, make_float3(3.2410f, -1.5374f, -0.4986f));
+	const float G = dot(xyz, make_float3(-0.9692f, 1.8760f, 0.0416f));
+	const float B = dot(xyz, make_float3(0.0556f, -0.2040f, 1.0570f));
+	return make_float3(R, G, B);
+}
+
 // Create ONB from normal.  Resulting W is parallel to normal
 __host__ __device__ __inline__ void createONB(const float3& n, float3& U, float3& V, float3& W)
 {
@@ -288,11 +387,6 @@ __device__ __inline__ float3 sampleUnitHemisphere(const float2& sample,
 	float z = sqrtf(max(0.0f, 1.0f - x * x - y * y));
 
 	return x * U + y * V + z * W;
-}
-
-__device__ __inline__ float3 norm_rgb(const float4& c)
-{
-	return make_float3(c.z, c.y, c.x);
 }
 
 __device__ __inline__ float3 pow3f(float3 x, float y)
@@ -335,6 +429,89 @@ __device__ __inline__ float3 sampleSphere(const float2& sample,
 	return x * U + y * V + z * W;
 }
 
+//Reinhard's tone mapping
+static __host__ __device__ __inline__ optix::float3 tonemap(const optix::float3 &hdr_value, float Y_log_av, float Y_max, float a = 0.04)
+{
+	using namespace optix;
+
+	float3 val_Yxy = rgb2Yxy(hdr_value);
+
+	float Y = val_Yxy.x; // Y channel is luminance
+	float Y_rel = a * Y / Y_log_av;
+	float mapped_Y = Y_rel * (1.0f + Y_rel / (Y_max * Y_max)) / (1.0f + Y_rel);
+
+	float3 mapped_Yxy = make_float3(mapped_Y, val_Yxy.y, val_Yxy.z);
+	float3 mapped_rgb = Yxy2rgb(mapped_Yxy);
+
+	return mapped_rgb;
+}
+
+static __host__ __device__ __inline__ optix::float3 tonemap_xyz(const optix::float3 &hdr_value, float Y_log_av, float Y_max, float a = 0.04)
+{
+	using namespace optix;
+
+	float3 val_Yxy = XYZ2Yxy(hdr_value);
+
+	float Y = val_Yxy.x; // Y channel is luminance
+	float Y_rel = a * Y / Y_log_av;
+	float mapped_Y = Y_rel * (1.0f + Y_rel / (Y_max * Y_max)) / (1.0f + Y_rel);
+
+	float3 mapped_Yxy = make_float3(mapped_Y, val_Yxy.y, val_Yxy.z);
+	float3 mapped_rgb = Yxy2rgb(mapped_Yxy);
+
+	return mapped_rgb;
+}
+
+
+__device__ __inline__ float3 norm_rgb(const float4& c)
+{
+	return make_float3(c.z, c.y, c.x);
+}
+
+__device__ __inline__ float3 pow3f(float3 x, float y)
+{
+	x.x = powf(x.x, y);
+	x.y = powf(x.y, y);
+	x.z = powf(x.z, y);
+
+	return x;
+}
+
+__device__ inline float3 powf(float3 a, float exp)
+{
+	return make_float3(powf(a.x, exp), powf(a.y, exp), powf(a.z, exp));
+}
+
+
+__device__ inline float3 exp3f(float3 a, float exp)
+{
+	return make_float3(expf(a.x*exp), expf(a.y* exp), expf(a.z*exp));
+}
+__device__ inline float4 powf(float4 a, float exp)
+{
+	return make_float4(powf(a.x, exp), powf(a.y, exp), powf(a.z, exp), powf(a.w, exp));
+}
+
+
+__device__ __inline__ float4 gamma(float4 cx, float gamma_value = 2.0f)
+{
+	float4 c = make_float4(powf(make_float3(cx), 1.0f / gamma_value), 0.0f);
+	return make_float4(__saturatef(c.x), __saturatef(c.y), __saturatef(c.z), 0.f);
+}
+
+__device__ __inline__ float lRgbTosRgb(float c, float gamma_value = 2.0f)
+{
+	if (c <= 0.0031308f)
+	{
+		return 12.92f*c;
+	}
+	const float a = 0.055f;
+	return (1.f + a)*powf(c, 1.0f / gamma_value) - a;
+}
+__device__ __inline__ float4 Gamma(float4 c, float gamma_value = 2.0f)
+{
+	return make_float4(__saturatef(lRgbTosRgb(c.x, gamma_value)), __saturatef(lRgbTosRgb(c.y, gamma_value)), __saturatef(lRgbTosRgb(c.z, gamma_value)), lRgbTosRgb(c.w, gamma_value));
+}
 
 static __device__ __inline__ float fold(const float value)
 {
@@ -407,7 +584,7 @@ __device__ __inline__ float __geomFactor(const float3& p1, const float3& n1, con
 	return (ndl*nldl) / (length(l)*length(l));
 }
 
-__device__ __inline__ bool isnan(const float3& v)
+__device__ __inline__ bool isNan(const float3& v)
 {
 	return isnan(v.x) || isnan(v.y) || isnan(v.z);
 }
@@ -439,3 +616,59 @@ __device__ __inline__ float FrCond(float cosi, const float &eta, const float &k)
 	return (Rparl2 + Rperp2) / 2.f;
 }
 
+__device__ __forceinline__ float absdot(const float3& a, const float3& b)
+{
+	return abs(dot(a, b));
+}
+
+__device__ __forceinline__ float3 abs(const float3& a)
+{
+	return make_float3(abs(a.x), abs(a.y), abs(a.z));
+}
+
+__device__ __forceinline__  bool intersect_sphere(const optix::Ray ray, const float4 sphere, float& tmin, float& tmax, float3& shading_normal)
+{
+	float3 center = make_float3(sphere);
+	float3 O = ray.origin - center;
+	float3 D = ray.direction;
+	float radius = sphere.w;
+
+	float b = dot(O, D);
+	float c = dot(O, O) - radius * radius;
+	float disc = b * b - c;
+	if (disc > 0.0f) {
+		float sdisc = sqrtf(disc);
+		float root1 = (-b - sdisc);
+		float root11 = 0.0f;
+		// refine root1
+		float3 O1 = O + root1 * ray.direction;
+		b = dot(O1, D);
+		c = dot(O1, O1) - radius * radius;
+		disc = b * b - c;
+
+		if (disc > 0.0f) {
+			sdisc = sqrtf(disc);
+			root11 = (-b - sdisc);
+		}
+		else
+			return false;
+		float root2 = (-b + sdisc) + root1;
+
+		tmin = root1 + root11;
+		tmax = root2;
+		if (tmin > tmax)
+		{
+			tmax = root1 + root11;
+			tmin = root2;
+		}
+		if (tmin < 0)
+		{
+			tmin = tmax;
+			if (tmin < 0)
+				return false;
+		}
+		shading_normal = (O + tmin * D) / radius;
+		return true;
+	}
+	return false;
+}

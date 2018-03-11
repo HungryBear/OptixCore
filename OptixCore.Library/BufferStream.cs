@@ -157,7 +157,7 @@ namespace OptixCore.Library
             mPosition += sizeInBytes;
             l.Free();
         }
-        public void WriteRange<T>(T[] buffer, int offset, int numElems)
+        public unsafe void WriteRange<T>(T[] buffer, int offset, int numElems)
             where T : struct
         {
             if (!mCanWrite)
@@ -172,12 +172,13 @@ namespace OptixCore.Library
             if (offset < 0)
                 throw new ArgumentOutOfRangeException("offset");
 
-            if (sizeInBytes < 0 || (offset + sizeInBytes > buffer.Length))
-                throw new ArgumentOutOfRangeException("numElems");
+            if (sizeInBytes < 0 || (offset + numElems > buffer.Length))
+                throw new ArgumentOutOfRangeException("numElems", buffer.Length, $"Buffer length < {offset + sizeInBytes}");
             if (mPosition + sizeInBytes > mSize)
                 throw new EndOfStreamException();
-            var l = GCHandle.Alloc(buffer[offset], GCHandleType.Pinned);
-            Marshal.Copy(l.AddrOfPinnedObject(), new[] { Buffer }, (int)mPosition, sizeInBytes);
+            var l = GCHandle.Alloc(buffer, GCHandleType.Pinned);
+            System.Buffer.MemoryCopy(l.AddrOfPinnedObject().ToPointer(), Buffer.ToPointer(), sizeInBytes, sizeInBytes);
+            //Marshal.Copy(l.AddrOfPinnedObject(), new[] { Buffer }, (int)mPosition, sizeInBytes);
             l.Free();
             mPosition += sizeInBytes;
         }

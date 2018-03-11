@@ -33,6 +33,7 @@ namespace Playground
         public Vector3 BackBufferColor;
         public int RaysTracedPerFrame;
 
+        public static bool GammaCorrection = true;
         public bool UsePBO = false;
         public bool UseSRGB = true;
         public bool DrawUI = true;
@@ -568,7 +569,12 @@ namespace Playground
 
         protected static byte FloatToColor(float v)
         {
-            float f = (float)Math.Pow(v, 1 / 2.2);
+            if (!GammaCorrection)
+            {
+                return (byte)MathF.Max(0f, MathF.Min(255f, MathF.Round(255.0f * v)));
+            }
+
+            var f = MathF.Pow(v, 1f / 2.2f);
 
             f = f > 1 ? 1 : (f < 0) ? 0 : f;
             return (byte)Math.Round(255.0f * f);
