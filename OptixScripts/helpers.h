@@ -468,15 +468,6 @@ __device__ __inline__ float3 norm_rgb(const float4& c)
 	return make_float3(c.z, c.y, c.x);
 }
 
-__device__ __inline__ float3 pow3f(float3 x, float y)
-{
-	x.x = powf(x.x, y);
-	x.y = powf(x.y, y);
-	x.z = powf(x.z, y);
-
-	return x;
-}
-
 __device__ inline float3 powf(float3 a, float exp)
 {
 	return make_float3(powf(a.x, exp), powf(a.y, exp), powf(a.z, exp));
