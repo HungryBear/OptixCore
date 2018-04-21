@@ -82,10 +82,6 @@ rtDeclareVariable(uint2,		launch_dim,   rtLaunchDim, );
 rtDeclareVariable(float3, geometric_normal, attribute geometric_normal, ); 
 rtDeclareVariable(float3, shading_normal,   attribute shading_normal, ); 
 
-__device__ inline float3 powf(float3 a, float exp)
-{
-	return make_float3(powf(a.x, exp), powf(a.y, exp), powf(a.z, exp));
-}
 
 // For miss program
 rtDeclareVariable(float3,       bg_color, , );

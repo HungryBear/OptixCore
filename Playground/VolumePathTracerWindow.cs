@@ -168,13 +168,13 @@ namespace Playground
             var cameraUp = Camera.Up;
             OptixContext["camUp"].Set(ref cameraUp);
             OptixContext["fov"].Set(Camera.Fov);
-            optixCamera.Setup(Camera.Position, Camera.Look, Camera.Up, new Vector2(Width, Height), Camera.Fov);
-            OptixContext["mPosition"].SetFloat3(optixCamera.mPosition);
-            OptixContext["mForward"].SetFloat3(optixCamera.mForward);
-            OptixContext["mResolution"].Set(optixCamera.mResolution.X, optixCamera.mResolution.Y);
-            OptixContext["mRasterToWorld"].Set(ref optixCamera.mRasterToWorld);
-            OptixContext["mWorldToRaster"].Set(ref optixCamera.mWorldToRaster);
-            OptixContext["mImagePlaneDist"].Set(optixCamera.mImagePlaneDist);
+            //optixCamera.Setup(Camera.Position, Camera.Look, Camera.Up, new Vector2(Width, Height), Camera.Fov);
+            //OptixContext["mPosition"].SetFloat3(optixCamera.mPosition);
+            //OptixContext["mForward"].SetFloat3(optixCamera.mForward);
+            //OptixContext["mResolution"].Set(optixCamera.mResolution.X, optixCamera.mResolution.Y);
+            //OptixContext["mRasterToWorld"].Set(ref optixCamera.mRasterToWorld);
+            //OptixContext["mWorldToRaster"].Set(ref optixCamera.mWorldToRaster);
+            //OptixContext["mImagePlaneDist"].Set(optixCamera.mImagePlaneDist);
 
             CameraUpdate();
         }

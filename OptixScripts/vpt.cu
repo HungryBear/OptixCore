@@ -1,4 +1,3 @@
-
 #include <optix.h>
 #include <optixu/optixu_math_namespace.h>
 #include "scene.h"
@@ -6,7 +5,7 @@
 #include "helpers.h"
 #include "path_tracer.h"
 #include "camera.h"
-#include "random.h"
+//#include "random.h"
 
 using namespace optix;
 
@@ -24,15 +23,6 @@ struct PerRayData_pathtrace
 	int inside;
 };
 
-struct PerRayData_pathtrace_shadow
-{
-	bool inShadow, inside;
-	float sigma_a;
-	float3 attenuation;
-};
-
-// Scene wide
-rtDeclareVariable(rtObject,      top_object, , );
 
 // For camera
 rtDeclareVariable(float3,        eye, , );
@@ -57,19 +47,8 @@ rtBuffer<float4, 2>              output_buffer;
 rtDeclareVariable(PerRayData_pathtrace, current_prd, rtPayload, );
 
 //optix tracked data
-rtDeclareVariable(optix::Ray,	ray,          rtCurrentRay, );
-rtDeclareVariable(float,		t_hit,        rtIntersectionDistance, );
 rtDeclareVariable(uint2,		launch_index, rtLaunchIndex, );
 rtDeclareVariable(uint2,		launch_dim,   rtLaunchDim, );
-
-//geometry attributes
-rtDeclareVariable(float3, geometric_normal, attribute geometric_normal, ); 
-rtDeclareVariable(float3, shading_normal,   attribute shading_normal, ); 
-
-__device__ inline float3 powf(float3 a, float exp)
-{
-	return make_float3(powf(a.x, exp), powf(a.y, exp), powf(a.z, exp));
-}
 
 __device__ __inline__ float sample_distance(const float e, const float sig_t)
 {
@@ -116,10 +95,10 @@ RT_PROGRAM void pathtrace_camera()
 		float2 jitter = make_float2(x-rnd(seed), y-rnd(seed));
 		float2 d = pixel + jitter*jitter_scale;
 		float3 ray_origin = eye;
-		float3 ray_direction;// = normalize(d.x*U + d.y*V + W);
+		float3 ray_direction = normalize(d.x*U + d.y*V + W);
 
-		float camPdf;
-		GenerateRay(jitter, ray_origin, ray_direction, &camPdf);
+		//float camPdf;
+		//GenerateRay(jitter, ray_origin, ray_direction, &camPdf);
 
 		PerRayData_pathtrace prd;
 		prd.result = make_float3(0.f);

@@ -89,19 +89,7 @@ __device__ __inline__ void sampleParallelogram(const ParallelogramLight& light,
 	pdf = dist2 / (area * cosine);
 }
 
-// Create ONB from normalalized vector
-__device__ __inline__ void createONB(const optix::float3& n,
-	optix::float3& U,
-	optix::float3& V)
-{
-	using namespace optix;
 
-	U = cross(n, make_float3(0.0f, 1.0f, 0.0f));
-	if (dot(U, U) < 1.e-3f)
-		U = cross(n, make_float3(1.0f, 0.0f, 0.0f));
-	U = normalize(U);
-	V = cross(n, U);
-}
 
 // sample hemisphere with cosine density
 __device__ __inline__ void sampleUnitHemisphere(const optix::float2& sample,
