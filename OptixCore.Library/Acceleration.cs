@@ -7,10 +7,10 @@ namespace OptixCore.Library
     /// <summary>
     /// Defines the Matrix layout used by Optix: Row major or Column major
     /// </summary>
-    public enum  MatrixLayout
+    public enum MatrixLayout
     {
         ColumnMajor = 0,
-        RowMajor	= 1
+        RowMajor = 1
     };
 
     /// <summary>
@@ -100,11 +100,10 @@ namespace OptixCore.Library
 
         AccelBuilder mBuilder;
         AccelTraverser mTraverser;
-
         public Acceleration(Context context, AccelBuilder mBuilder, AccelTraverser mTraverser) : base(context)
         {
             CheckError(Api.rtAccelerationCreate(context.InternalPtr, ref InternalPtr));
-            GCHandle.Alloc(InternalPtr, GCHandleType.Pinned);
+            gch = GCHandle.Alloc(InternalPtr, GCHandleType.Pinned);
 
             Builder = mBuilder;
             Traverser = mTraverser;
@@ -112,7 +111,7 @@ namespace OptixCore.Library
             MarkAsDirty();
         }
 
-        internal Acceleration(Context ctx , IntPtr acc) : base(ctx)
+        internal Acceleration(Context ctx, IntPtr acc) : base(ctx)
         {
             InternalPtr = acc;
             CheckError(Api.rtAccelerationGetBuilder(InternalPtr, out var builderStr));
@@ -159,7 +158,7 @@ namespace OptixCore.Library
 
                 return new BufferStream(data, size, true, false, true);
             }
-            set => CheckError( Api.rtAccelerationSetData( InternalPtr, value.DataPointer, (uint)value.Length ) );
+            set => CheckError(Api.rtAccelerationSetData(InternalPtr, value.DataPointer, (uint)value.Length));
         }
 
         /// <summary>

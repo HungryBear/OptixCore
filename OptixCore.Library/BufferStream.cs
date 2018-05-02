@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace OptixCore.Library
@@ -34,14 +35,20 @@ namespace OptixCore.Library
             {
                 GC.AddMemoryPressure(mSize);
             }
-            var buffer = new byte[4096];
+            mSize = source.Length;
+            var buffer = new byte[mSize];
 
-            int num = 0;
-            while ((num = source.Read(buffer, 0, buffer.Length)) != 0)
+            int num = 0, ofs = 0;
+            bool done = false;
+            while (!done)
             {
-                WriteRange(buffer, num, buffer.Length);
+                num = source.Read(buffer, 0, buffer.Length);
+                WriteRange(buffer, ofs, buffer.Length);
+                ofs = num;
+                done = ofs == 0;
             }
 
+            mPosition = 0;
             source.Close();
             mCanWrite = false;
         }
@@ -93,17 +100,9 @@ namespace OptixCore.Library
                 throw new EndOfStreamException();
 
             var l = GCHandle.Alloc(r, GCHandleType.Pinned);
-            var dest = new[] { MemoryHelper.AddressOf(r) };
-            Marshal.Copy(Buffer, dest, (int)mPosition, sizeInBytes);
+            MemoryHelper.BlitMemory(new IntPtr(this.Buffer.ToInt64() + mPosition), l.AddrOfPinnedObject(), (uint)sizeInBytes);
             mPosition += sizeInBytes;
             l.Free();
-        }
-
-        public void WriteRange<T>(T[] triangleLight)
-            where T : struct
-
-        {
-            this.WriteRange(triangleLight, 0, triangleLight.Length);
         }
 
         public int ReadRange<T>(T[] buffer, int offset, int numElems)
@@ -122,15 +121,18 @@ namespace OptixCore.Library
             if (offset < 0)
                 throw new ArgumentOutOfRangeException("offset");
 
-            if (sizeInBytes < 0 || (offset + sizeInBytes > buffer.Length))
+            if (sizeInBytes < 0 || (offset + sizeInBytes > buffer.Length*elemSize))//
                 throw new ArgumentOutOfRangeException("numElems");
 
             var validSize = Math.Min(mSize - mPosition, sizeInBytes);
 
-            var l = GCHandle.Alloc(buffer[offset], GCHandleType.Pinned);
-            var dest = new[] { l.AddrOfPinnedObject() };
-            Marshal.Copy(Buffer, dest, (int)mPosition, (int)validSize);
+            var l = GCHandle.Alloc(buffer, GCHandleType.Pinned);
+            var bufferSpan = new Span<T>(buffer, offset, numElems);
+            MemoryHelper.CopyFromUnmanaged(new IntPtr(this.Buffer.ToInt64() + mPosition), ref bufferSpan, (uint)numElems);
+            //MemoryHelper.CopyFromManaged(ref bufferSpan, new IntPtr(this.Buffer.ToInt64() + mPosition), (uint)sizeInBytes);
+            //BlitMemory(new IntPtr(this.Buffer.ToInt64() + mPosition), l.AddrOfPinnedObject(), (uint)sizeInBytes);
             l.Free();
+
             mPosition += validSize;
 
             return (int)validSize;
@@ -148,16 +150,23 @@ namespace OptixCore.Library
 
             // internal checks
             if (mPosition + sizeInBytes > mSize)
-                //throw new EndOfStreamException();
-                return;
+                throw new EndOfStreamException();
+                //return;
             var l = GCHandle.Alloc(r, GCHandleType.Pinned);
             var rpt = IntPtr.Zero;
             MemoryHelper.MemCopy(IntPtr.Add(Buffer, (int)mPosition), l.AddrOfPinnedObject(), (uint)sizeInBytes);
-            //Marshal.Copy(l.AddrOfPinnedObject(), new[] { Buffer }, (int)mPosition, sizeInBytes);
             mPosition += sizeInBytes;
             l.Free();
         }
-        public unsafe void WriteRange<T>(T[] buffer, int offset, int numElems)
+
+        public void WriteRange<T>(T[] triangleLight)
+            where T : struct
+
+        {
+            this.WriteRange(triangleLight, 0, triangleLight.Length);
+        }
+
+        public void WriteRange<T>(T[] buffer, int offset, int numElems)
             where T : struct
         {
             if (!mCanWrite)
@@ -176,10 +185,17 @@ namespace OptixCore.Library
                 throw new ArgumentOutOfRangeException("numElems", buffer.Length, $"Buffer length < {offset + sizeInBytes}");
             if (mPosition + sizeInBytes > mSize)
                 throw new EndOfStreamException();
-            var l = GCHandle.Alloc(buffer, GCHandleType.Pinned);
-            System.Buffer.MemoryCopy(l.AddrOfPinnedObject().ToPointer(), Buffer.ToPointer(), sizeInBytes, sizeInBytes);
-            //Marshal.Copy(l.AddrOfPinnedObject(), new[] { Buffer }, (int)mPosition, sizeInBytes);
-            l.Free();
+
+            var buffSpan = new Span<T>(buffer, offset, numElems);
+            MemoryHelper.CopyFromUnmanaged(new IntPtr(this.Buffer.ToInt64() + mPosition), ref buffSpan, (uint)sizeInBytes);
+
+            //var mm = new Memory<T>(buffer, offset, numElems);
+            //var mHandle = mm.Pin();
+            
+            //System.Buffer.MemoryCopy(mHandle.Pointer,
+            //    new IntPtr(this.Buffer.ToInt64() + mPosition).ToPointer(),
+            //    sizeInBytes, sizeInBytes);
+            //mHandle.Dispose();
             mPosition += sizeInBytes;
         }
 

@@ -5,20 +5,16 @@ using OptixCore.Library.Native.Prime;
 namespace OptixCore.Library
 {
 
-    public class TraversalStream<T> : BufferStream
+    public class TraversalStream<T>
         where T : struct
     {
         public BufferStream Stream;
 
-        public override long Length => Stream.Length / Marshal.SizeOf<T>();
+        public long Length => Stream.Length / Marshal.SizeOf<T>();
 
-        public TraversalStream(BufferStream source) : base(source)
+        public TraversalStream(BufferStream source)
         {
             this.Stream = source;
-        }
-
-        internal TraversalStream(IntPtr buffer, long sizeInBytes, bool canRead, bool canWrite, bool ownData) : base(buffer, sizeInBytes, canRead, canWrite, ownData)
-        {
         }
 
         public void GetData(T[] results)
@@ -29,22 +25,9 @@ namespace OptixCore.Library
             if ((results.Length * Marshal.SizeOf<T>()) != Stream.Length)
                 throw new ArgumentOutOfRangeException("results", "Results array must be able to hold entire TraversalStream");
 
-            Stream.ReadRange(results, 0, results.Length);
+            Stream.ReadRange(results, 0, results.Length* Marshal.SizeOf<T>());
         }
-    }
-
-    public enum QueryType
-    {
-        /// <summary>
-        /// Perform an any hit ray intersection
-        /// </summary>
-        AnyHit		= RTPquerytype.RTP_QUERY_TYPE_ANY,
-
-		/// <summary>
-		/// Perform a closest hit ray intersection
-		/// </summary>
-		ClosestHit	= RTPquerytype.RTP_QUERY_TYPE_CLOSEST,
-	};
+    }   
 
     public enum RtpBufferType
     {
@@ -167,27 +150,14 @@ namespace OptixCore.Library
 		BackFacing	= 1<<2
     };
 
-    /// <summary>
-    /// Structure encapsulating the result of a single ray query.
-    /// </summary>
-    public struct TraversalResult
-    {
-		/// <summary>
-		/// Index of the interesected triangle, -1 for miss.
-		/// </summary>
-		int PrimitiveID;
 
-        /// <summary>
-        /// Ray t parameter of hit point.
-        /// </summary>
-        float T;
-    };
 
     public enum RTPBufferType
     {
         Host = 0x200,  /*!< Buffer in host memory */
         CudaLinear = 0x201   /*!< Linear buffer in device memory on a cuda device */
     };
+
 
     public abstract class OptixPrimeNode : IDisposable
     {

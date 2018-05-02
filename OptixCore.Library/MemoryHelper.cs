@@ -42,5 +42,41 @@ namespace OptixCore.Library
             Marshal.Copy(src, data, 0, (int)count);
             Marshal.Copy(data, 0, dest, (int)count);
         }
+
+        public static void BlitMemory(IntPtr src, IntPtr dst, uint sizeInBytes)
+        {
+            var srcSpan = new Span<byte>(src.ToPointer(), (int)sizeInBytes);
+            var dstSpan = new Span<byte>(dst.ToPointer(), (int)sizeInBytes);
+            int i = 0;
+            while (i < sizeInBytes)
+            {
+                dstSpan[i] = srcSpan[i];
+                i++;
+            }
+        }
+
+        public static void CopyFromManaged<T>(ref Span<T> src, IntPtr dst, uint elements)
+            where T:struct
+        {
+            var dstSpan = new Span<T>(dst.ToPointer(), (int)elements);
+            int i = 0;
+            while (i < elements)
+            {
+                dstSpan[i] = src[i];
+                i++;
+            }
+        }
+
+        public static void CopyFromUnmanaged<T>(IntPtr src, ref Span<T> dst, uint elements)
+            where T : struct
+        {
+            var dstSpan = new Span<T>(src.ToPointer(), (int)elements);
+            int i = 0;
+            while (i < elements)
+            {
+                dst[i] = dstSpan[i];
+                i++;
+            }
+        }
     }
 }
