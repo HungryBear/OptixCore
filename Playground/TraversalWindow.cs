@@ -164,7 +164,7 @@ namespace Playground
             {
                 for (int y = 0; y < Height; y++)
                 {
-                    Vector2 d = new Vector2(x, y) / (new Vector2(Width, Height) * 2.0f - new Vector2(1.0f));
+                    Vector2 d = new Vector2(x, y) / new Vector2(Width, Height) * 2.0f - new Vector2(1.0f);
 
                     TraversalEngine.Ray ray;
                     ray.Origin = Camera.Position;
@@ -181,7 +181,7 @@ namespace Playground
         {
             Camera = new Camera();
             Camera.Aspect = (float)Width / (float)Height;
-            Camera.Fov = 60;
+            Camera.Fov = 30;
             Camera.RotationVel = 100.0f;
             Camera.TranslationVel = 500.0f;
 
