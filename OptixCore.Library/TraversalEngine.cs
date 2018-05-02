@@ -204,5 +204,24 @@ namespace OptixCore.Library
             CheckError(TraversalApi.rtuTraversalUnmapOutput(mTraversal, RTUoutput.RTU_OUTPUT_NORMAL));
             lc.Free();
         }
+
+        public void GetBaryCentricOutput(Vector2[] output )
+        {
+            if (output.Length != mCurrentNumRays)
+                throw new ArgumentOutOfRangeException("output", "Output array must equal number of rays set on the Traversal object");
+
+            IntPtr outputData = IntPtr.Zero;
+            CheckError(TraversalApi.rtuTraversalMapOutput(mTraversal, RTUoutput.RTU_OUTPUT_BARYCENTRIC, ref outputData));
+
+            if (outputData == IntPtr.Zero)
+                throw new OptixException("Traversal Error: NormalOutput buffer cannot be mapped");
+            var lc = GCHandle.Alloc(output, GCHandleType.Pinned);
+
+            var span = new Span<Vector2>(output);
+            MemoryHelper.CopyFromUnmanaged(outputData, ref span, (uint)mCurrentNumRays);
+
+            CheckError(TraversalApi.rtuTraversalUnmapOutput(mTraversal, RTUoutput.RTU_OUTPUT_BARYCENTRIC));
+            lc.Free();
+        }
     }
 }
