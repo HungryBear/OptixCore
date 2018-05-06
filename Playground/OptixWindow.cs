@@ -23,7 +23,7 @@ namespace Playground
     using Gl = GL;
     public class OptixWindow : GameWindow
     {
-        public static string ScriptsPath = @"..\OptixScripts\ScriptOutput\";
+        public static string ScriptsPath = @"..\..\..\..\..\OptixScripts\ScriptOutput\";
         public static string ImageSaveDir = @"..\";
         protected const string ImageFileTemplate = "{0}_{1}.exr";
 

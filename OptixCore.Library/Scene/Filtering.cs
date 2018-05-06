@@ -45,11 +45,9 @@ namespace OptixCore.Library.Scene
             }
 
 
-            // GaussianFilter Private Data
             float alpha;
             float expX, expY;
 
-            // GaussianFilter Utility Functions
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             float Gaussian(float d, float expv)
             {
@@ -71,7 +69,7 @@ namespace OptixCore.Library.Scene
         }
 
 
-        public class MitchelFilter : Filter
+        public sealed class MitchelFilter : Filter
         {
             public MitchelFilter(float xw, float yw, float b = 1f / 3f, float c = 1f / 3f)
                 : base(xw, yw)
@@ -80,9 +78,9 @@ namespace OptixCore.Library.Scene
                 this.C = c;
             }
 
-            public override sealed float Evaluate(float x, float y)
+            public override float Evaluate(float x, float y)
             {
-                float distance = (float)Math.Sqrt(x * x * invXWidth * invXWidth + y * y * invYWidth * invYWidth);
+                var distance = (float)Math.Sqrt(x * x * invXWidth * invXWidth + y * y * invYWidth * invYWidth);
 
                 return Mitchell1D(distance);
 
@@ -174,15 +172,9 @@ namespace OptixCore.Library.Scene
                 {
                     for (var ix = 0; ix < lutsSize; ++ix)
                     {
-                        float x = ix * step - 0.5f + step / 2f;
-                        float y = iy * step - 0.5f + step / 2f;
-
+                        var x = ix * step - 0.5f + step / 2f;
+                        var y = iy * step - 0.5f + step / 2f;
                         luts[ix + iy * lutsSize] = new FilterLUT(filter, x, y);
-                        /*std::cout << "===============================================\n";
-                        std::cout << ix << "," << iy << "\n";
-                        std::cout << x << "," << y << "\n";
-                        std::cout << *luts[ix + iy * lutsSize] << "\n";
-                        std::cout << "===============================================\n";*/
                     }
                 }
             }
@@ -208,8 +200,7 @@ namespace OptixCore.Library.Scene
         {
             if ((double)val <= 0.0)
                 return 0;
-            else
-                return (int)val;
+            return (int)val;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -234,11 +225,10 @@ namespace OptixCore.Library.Scene
                 {
                     float fx = (x + 0.5f) * 2.0f / 16.0f;
                     Gaussian2x2_filterTable[x + y * 16] = filter.Evaluate(fx, fy);
-                    //Max<float>(0.f, expf(-alpha * fx * fx) - expX) *Max<float>(0.f, expf(-alpha * fy * fy) - expY);
                 }
             }
 
-            BufferDesc desc = new BufferDesc()
+            BufferDesc desc = new BufferDesc
             {
                 Width = 16 * 16,
                 Type = BufferType.Input,

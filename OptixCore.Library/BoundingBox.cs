@@ -32,25 +32,6 @@ namespace OptixCore.Library
                             System.Math.Max(Max.Z, p.Z));
         }
 
-        //public void AddBounds(BoundingBox box)
-        //{
-        //    for (int i = 0; i < 3; i++)
-        //    {
-        //        Min[i] = (box.Min[i] < Min[i]) ? box.Min[i] : Min[i];
-        //        Max[i] = (box.Max[i] > Max[i]) ? box.Max[i] : Max[i];
-        //    }
-        //}
-
-        //public void AddBoundsWithTranslation(BoundingBox box, Vector3 trans)
-        //{
-        //    box.TranslateSelf(trans);
-        //    for (int i = 0; i < 3; i++)
-        //    {
-        //        Min[i] = (box.Min[i] < Min[i]) ? box.Min[i] : Min[i];
-        //        Max[i] = (box.Max[i] > Max[i]) ? box.Max[i] : Max[i];
-        //    }
-        //}
-
         public bool Contains(Vector3 p)
         {
             return p.X >= Min.X && p.X <= Max.X &&
@@ -122,10 +103,6 @@ namespace OptixCore.Library
             }
         }
 
-        /// <summary>
-        /// Gets or Sets the Min or Max component, where Min = 0, Max = 1
-        /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException">Index outside the number of bounding box components.</exception>
         public Vector3 this[int index]
         {
             get

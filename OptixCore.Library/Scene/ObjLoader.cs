@@ -103,26 +103,15 @@ namespace OptixCore.Library.Scene
 
         public void CreateNormals()
         {
-            //only allow normal generation for objs that don't have normals
-            /*if (Normals.Count > 0 || !GenerateNormals)
-            {
-                GenerateNormals = false;
-                return;
-            }*/
 
             float winding = 1.0f;
-            //if (FrongFaceWinding == false) winding = -1.0f;
 
             Trace.Write("[Creating normals: ");
-            //float start = Time.GetTimeInSecs();
 
-            //fill with zeros
-            Vector3 zero = new Vector3(0, 0, 0);
             for (int i = 0; i < Positions.Count; i++)
-                Normals.Add(zero);
+                Normals.Add(Vector3.Zero);
 
-            //loop through the triangles
-            foreach (ObjGroup group in Geometry)
+            foreach (var group in Geometry)
             {
                 group.NIndices.Clear();
                 for (int i = 0; i < group.VIndices.Count; i++)
@@ -143,12 +132,9 @@ namespace OptixCore.Library.Scene
                 }
             }
 
-            for (int i = 0; i < Positions.Count; i++)
-            {
-                //Normals[i].Normalize();
-            }
 
-            //Trace.Write(string.Format("{0:0.00}s] ", Time.GetTimeInSecs() - start));
+
+            Trace.Write("..Complete!]" +Environment.NewLine);            
         }
     }
 
@@ -202,10 +188,8 @@ namespace OptixCore.Library.Scene
 
         public virtual void LoadContent(Func<string, string, Material> materialResolver = null)
         {
-            var start = LoadObj();
+            LoadObj();
             CreateGeometry();
-
-            //Trace.WriteLine(string.Format("{0:0.00}s", Time.GetTimeInSecs() - start));
         }
 
         public static ObjData LoadObj(string fileName, bool generateNormals = false)
@@ -362,11 +346,9 @@ namespace OptixCore.Library.Scene
                                     mCurrentGroup.NIndices.Add(new Int3(v0 - delta, v1 - delta, v2 - delta));
                                 }
 
-                                //forget anything else
                             }
                             else if (tokens.Length >= 7)
                             {
-                                //v, ( vn | vt ) indices
                                 v0 = int.Parse(tokens[1]);
                                 v1 = int.Parse(tokens[3]);
                                 v2 = int.Parse(tokens[5]);
@@ -622,7 +604,6 @@ namespace OptixCore.Library.Scene
 
         protected void CreateNormals()
         {
-            //only allow normal generation for objs that don't have normals
             if (Normals.Count > 0 || !GenerateNormals)
             {
                 GenerateNormals = false;
@@ -634,15 +615,11 @@ namespace OptixCore.Library.Scene
                 winding = -1.0f;
 
             Trace.Write("[Creating normals: ");
-            //float start = Time.GetTimeInSecs();
-
-            //fill with zeros
-            Vector3 zero = new Vector3(0, 0, 0);
             for (int i = 0; i < Positions.Count; i++)
-                Normals.Add(zero);
+                Normals.Add(Vector3.Zero);
 
             //loop through the triangles
-            foreach (ObjGroup group in Groups)
+            foreach (var group in Groups)
             {
                 for (int i = 0; i < group.VIndices.Count; i++)
                 {
@@ -661,12 +638,6 @@ namespace OptixCore.Library.Scene
                 }
             }
 
-            for (int i = 0; i < Positions.Count; i++)
-            {
-                //Normals[i] = ObjData.Normalize(Normals[i]);
-            }
-
-            //Trace.Write(string.Format("{0:0.00}s] ", Time.GetTimeInSecs() - start));
         }
 
         protected bool ValidateGroup(ObjGroup group)

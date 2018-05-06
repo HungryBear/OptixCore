@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Numerics;
 using System.Runtime.InteropServices;
@@ -30,7 +31,7 @@ namespace Playground
             var rayGenPath = GetScript("path_tracer.cu.ptx");
             var shaderPath = GetScript("path_tracer.cu.ptx");
             var modelName = "cornell-dragon.obj";
-            var modelPath = Path.GetFullPath(@"..\Assets\Models\" + modelName);
+            var modelPath = Path.GetFullPath(@"..\..\..\..\..\Assets\Models\" + modelName);
             /*-----------------------------------------------
             * Create the Optix context
             *-----------------------------------------------*/
@@ -43,7 +44,7 @@ namespace Playground
              * Create the material that will be executed when there is an intersection
              *-----------------------------------------------*/
             var material = new Material(OptixContext);
-            
+            Console.WriteLine("Shader path = " +shaderPath);
             material.Programs[0] = new SurfaceProgram(OptixContext, RayHitType.Closest, shaderPath, "diffuse");
             material.Programs[1] = new SurfaceProgram(OptixContext, RayHitType.Any, shaderPath, "shadow");
 
@@ -148,7 +149,7 @@ namespace Playground
             Camera.TranslationVel = 100.0f;
 
             Camera.CenterOnBoundingBox(box, .95f);
-
+            
             CameraUpdate();
         }
 
@@ -163,7 +164,7 @@ namespace Playground
         protected override void CameraUpdate()
         {
             mFrame = 0;
-
+            Console.WriteLine($"Camera = {Camera.Position}f  {Camera.Target}f  {Camera.Up}f");
             var eye = Camera.Position;
             var right = Camera.Right;
             var up = Camera.Up;

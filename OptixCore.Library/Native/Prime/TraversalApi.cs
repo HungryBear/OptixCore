@@ -132,7 +132,7 @@ namespace OptixCore.Library.Native.Prime
 
     internal class TraversalApi
     {
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(OptixLibraries.OptixULib, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         public static extern RTresult rtuTraversalCreate(ref RTUtraversal traversal,
             RTUquerytype query_type,
             RTUrayformat ray_format,
@@ -141,50 +141,51 @@ namespace OptixCore.Library.Native.Prime
             uint options,
             RTcontext context);
 
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(OptixLibraries.OptixULib, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         public static extern RTresult rtuTraversalSetMesh(RTUtraversal traversal,
             uint num_verts,
             IntPtr verts,
             uint num_tris,
             IntPtr indices );
 
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(OptixLibraries.OptixULib, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         public static extern RTresult rtuTraversalMapRays(RTUtraversal traversal, uint num_rays, ref IntPtr rays);
 
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(OptixLibraries.OptixULib, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         public static extern RTresult rtuTraversalUnmapRays(RTUtraversal traversal);
 
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(OptixLibraries.OptixULib, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         public static extern RTresult rtuTraversalTraverse(RTUtraversal traversal);
 
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(OptixLibraries.OptixULib, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         public static extern RTresult rtuTraversalMapResults(RTUtraversal traversal, ref IntPtr results);
 
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(OptixLibraries.OptixULib, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         public static extern RTresult rtuTraversalUnmapResults(RTUtraversal traversal);
 
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(OptixLibraries.OptixULib, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         public static extern RTresult rtuTraversalMapOutput(RTUtraversal traversal, RTUoutput which, ref IntPtr output);
 
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(OptixLibraries.OptixULib, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         public static extern RTresult rtuTraversalUnmapOutput(RTUtraversal traversal, RTUoutput which);
 
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(OptixLibraries.OptixULib, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         public static extern RTresult rtuTraversalGetErrorString(RTUtraversal traversal,RTresult code, [MarshalAs(UnmanagedType.LPStr)]out string  return_string);
 
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(OptixLibraries.OptixULib, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         public static extern RTresult rtuTraversalSetOption(RTUtraversal traversal, RunTimeOptions option, IntPtr value);
 
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(OptixLibraries.OptixULib, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         public static extern RTresult rtuTraversalDestroy(RTUtraversal traversal);
 
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(OptixLibraries.OptixULib, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         public static extern RTresult rtuTraversalPreprocess(RTUtraversal traversal);
 
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(OptixLibraries.OptixULib, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         public static extern RTresult rtuTraversalGetAccelDataSize(RTUtraversal traversal,ref uint data_size);
 
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(OptixLibraries.OptixULib, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         public static extern RTresult rtuTraversalGetAccelData(RTUtraversal traversal, IntPtr data);
+
     }
 }

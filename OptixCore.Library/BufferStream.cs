@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace OptixCore.Library
@@ -129,8 +128,6 @@ namespace OptixCore.Library
             var l = GCHandle.Alloc(buffer, GCHandleType.Pinned);
             var bufferSpan = new Span<T>(buffer, offset, numElems);
             MemoryHelper.CopyFromUnmanaged(new IntPtr(this.Buffer.ToInt64() + mPosition), ref bufferSpan, (uint)numElems);
-            //MemoryHelper.CopyFromManaged(ref bufferSpan, new IntPtr(this.Buffer.ToInt64() + mPosition), (uint)sizeInBytes);
-            //BlitMemory(new IntPtr(this.Buffer.ToInt64() + mPosition), l.AddrOfPinnedObject(), (uint)sizeInBytes);
             l.Free();
 
             mPosition += validSize;
@@ -148,12 +145,9 @@ namespace OptixCore.Library
             var elemSize = Marshal.SizeOf<T>();
             var sizeInBytes = elemSize;
 
-            // internal checks
             if (mPosition + sizeInBytes > mSize)
                 throw new EndOfStreamException();
-                //return;
             var l = GCHandle.Alloc(r, GCHandleType.Pinned);
-            var rpt = IntPtr.Zero;
             MemoryHelper.MemCopy(IntPtr.Add(Buffer, (int)mPosition), l.AddrOfPinnedObject(), (uint)sizeInBytes);
             mPosition += sizeInBytes;
             l.Free();
@@ -189,13 +183,6 @@ namespace OptixCore.Library
             var buffSpan = new Span<T>(buffer, offset, numElems);
             MemoryHelper.CopyFromUnmanaged(new IntPtr(this.Buffer.ToInt64() + mPosition), ref buffSpan, (uint)sizeInBytes);
 
-            //var mm = new Memory<T>(buffer, offset, numElems);
-            //var mHandle = mm.Pin();
-            
-            //System.Buffer.MemoryCopy(mHandle.Pointer,
-            //    new IntPtr(this.Buffer.ToInt64() + mPosition).ToPointer(),
-            //    sizeInBytes, sizeInBytes);
-            //mHandle.Dispose();
             mPosition += sizeInBytes;
         }
 
