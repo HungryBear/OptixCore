@@ -1,34 +1,8 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using OptixCore.Library.Native.Prime;
 
-namespace OptixCore.Library
+namespace OptixCore.Library.Prime
 {
-
-    public class TraversalStream<T>
-        where T : struct
-    {
-        public BufferStream Stream;
-
-        public long Length => Stream.Length / Marshal.SizeOf<T>();
-
-        public TraversalStream(BufferStream source)
-        {
-            this.Stream = source;
-        }
-
-        public void GetData(T[] results)
-        {
-            if (results == null)
-                throw new ArgumentNullException("results", "Results array cannot be null.");
-
-            if ((results.Length * Marshal.SizeOf<T>()) != Stream.Length)
-                throw new ArgumentOutOfRangeException("results", "Results array must be able to hold entire TraversalStream");
-
-            Stream.ReadRange(results, 0, results.Length* Marshal.SizeOf<T>());
-        }
-    }   
-
     public enum RtpBufferType
     {
         Host = RTPbuffertype.RTP_BUFFER_TYPE_HOST,
@@ -177,11 +151,6 @@ namespace OptixCore.Library
             this.mContext = context;
         }
 
-        ~OptixPrimeNode()
-        {
-            //Destroy();
-        }
-
         internal void CheckError(RTPresult result)
         {
             if (result != RTPresult.RTP_SUCCESS)
@@ -195,90 +164,6 @@ namespace OptixCore.Library
         {
             Destroy();
             GC.SuppressFinalize(this);
-        }
-    }
-
-    public class PrimeBufferDesc
-    {
-        public RtpBufferFormat Format { get; set; }
-        public RTPBufferType Type { get; set; }
-
-    }
-
-    public class PrimeBuffer : OptixPrimeNode
-    {
-        public PrimeBuffer(PrimeContext context, PrimeBufferDesc fmt, IntPtr data) : base(context)
-        {
-            CheckError(PrimeApi.rtpBufferDescCreate(context.InternalPtr, (RTPbufferformat)fmt.Format, (RTPbuffertype)fmt.Type, data, out InternalPtr ));            
-        }
-
-        public override void Validate()
-        {
-            
-        }
-
-        public override void Destroy()
-        {
-            CheckError(PrimeApi.rtpBufferDescDestroy(InternalPtr));
-        }
-    }
-
-    public class PrimeModel : OptixPrimeNode
-    {
-        public PrimeModel(PrimeContext context) : base(context)
-        {
-        }
-
-        public override void Validate()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Destroy()
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class PrimeContext : IDisposable
-    {
-        protected internal IntPtr InternalPtr;
-
-        public PrimeContext()
-        {
-            CheckError(PrimeApi.rtpContextCreate(RTPcontexttype.RTP_CONTEXT_TYPE_CUDA, out InternalPtr));
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                Destroy();
-            }
-        }
-
-        private void Destroy()
-        {
-            if (InternalPtr != IntPtr.Zero)
-            {
-                CheckError(PrimeApi.rtpContextDestroy(InternalPtr));
-                InternalPtr = IntPtr.Zero;
-            }
-        }
-
-        internal void CheckError(RTPresult result)
-        {
-            if (result != RTPresult.RTP_SUCCESS)
-            {
-                PrimeApi.rtpGetErrorString(result, out var message);
-                throw new OptixException($"Optix context error : {message}");
-            }
         }
     }
 }

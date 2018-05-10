@@ -22,14 +22,15 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Memory" Version="4.5.0-preview2-26406-04" />
+    <PackageReference Include="System.Memory" Version="4.5.0-rc1" />
     <PackageReference Include="System.Numerics.Vectors">
-      <Version>4.5.0-preview2-26406-04</Version>
+      <Version>4.5.0-rc1</Version>
     </PackageReference>
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.0-preview2-26406-04" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.0-rc1" />
   </ItemGroup>
 
 </Project>

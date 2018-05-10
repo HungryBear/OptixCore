@@ -107,8 +107,8 @@
     <LibraryPath>c:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\lib\x64\;C:\ProgramData\NVIDIA Corporation\OptiX SDK 4.1.1\lib64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>c:\ProgramData\NVIDIA Corporation\OptiX SDK 4.1.1\include\;$(IncludePath)</IncludePath>
-    <LibraryPath>c:\ProgramData\NVIDIA Corporation\OptiX SDK 4.1.1\lib64\;$(LibraryPath)</LibraryPath>
+    <IncludePath>c:\ProgramData\NVIDIA Corporation\OptiX SDK 5.0.0\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>c:\ProgramData\NVIDIA Corporation\OptiX SDK 5.0.0\lib64\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='x64Debug|x64'">
     <IncludePath>c:\ProgramData\NVIDIA Corporation\OptiX SDK 4.1.1\include\;$(IncludePath)</IncludePath>

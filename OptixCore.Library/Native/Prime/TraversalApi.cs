@@ -104,8 +104,8 @@ namespace OptixCore.Library.Native.Prime
 
     public enum RayFormat
     {
-        OriginDirectionMinMaxInterleaved
-
+        OriginDirectionMinMaxInterleaved,
+        OriginDirectionInterleaved = 1
     }
 
     /// <summary>

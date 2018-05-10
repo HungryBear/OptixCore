@@ -8,10 +8,6 @@ using OptixCore.Library;
 using OptixCore.Library.Native.Prime;
 using OptixCore.Library.Scene;
 
-using InitOptions = OptixCore.Library.InitOptions;
-using RayFormat = OptixCore.Library.RayFormat;
-using TraversalOutput = OptixCore.Library.TraversalOutput;
-using TriFormat = OptixCore.Library.TriFormat;
 
 namespace Playground
 {
@@ -40,7 +36,7 @@ namespace Playground
             //mTraversal.NumCpuThreads = Context.CpuNumThreads;
 
 
-            OptixOBJLoader model = new OptixOBJLoader(modelPath, OptixContext, null, null);
+            var model = new OptixOBJLoader(modelPath, OptixContext, null, null);
 
             //OBJLoader normally automatically creates Geometry, GeometryInstances, and GeometryGroups for Optix
             //but the Traversal API doesn't use that, so turn that off
@@ -77,7 +73,7 @@ namespace Playground
                 var buffer = new byte[size];
                 accData.ReadRange(buffer, 0, (int)size);
                 var nonZeros = buffer.Count(b => b != 0);
-                Console.WriteLine("Non zeros in acc data "+nonZeros);
+                Console.WriteLine("Non zeros in acc data " + nonZeros);
             }
 
         }
@@ -133,20 +129,20 @@ namespace Playground
             GL.DrawPixels(Width, Height, PixelFormat.Luminance, PixelType.Float, mDepths);
             */
 
-                        if (mUpdateNormals)
-                        {
-                            mTraversal.GetNormalOutput(mNormals);
+            if (mUpdateNormals)
+            {
+                mTraversal.GetNormalOutput(mNormals);
 
-                            //bias/scale normals so we don't have black
-                            for (int i = 0; i < mNormals.Length; i++)
-                            {
-                                mNormals[i] = mNormals[i] * new Vector3(.5f) + new Vector3(.5f);
-                            }
+                //bias/scale normals so we don't have black
+                for (int i = 0; i < mNormals.Length; i++)
+                {
+                    mNormals[i] = mNormals[i] * new Vector3(.5f) + new Vector3(.5f);
+                }
 
-                            mUpdateNormals = false;
-                        }
-                        GL.DrawPixels(Width, Height, PixelFormat.Rgb, PixelType.Float, mNormals);
-                        
+                mUpdateNormals = false;
+            }
+            GL.DrawPixels(Width, Height, PixelFormat.Rgb, PixelType.Float, mNormals);
+
             this.SwapBuffers();
         }
 
