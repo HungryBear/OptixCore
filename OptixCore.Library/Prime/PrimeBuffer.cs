@@ -38,8 +38,11 @@ namespace OptixCore.Library.Prime
             var dataPtr = IntPtr.Zero;
             if (desc.Type == RTPBufferType.CudaLinear)
             {
-                CudaInterop.CudaCall(CudaInterop.cuMemAlloc(ref dataPtr, (uint) dataLength));
-                // CudaInterop.CudaCall(CudaInterop.cuMemcpyHtoD(ref dataPtr, data2Cpy.Pointer, (uint) dataLength));
+                //CudaDriverApi.CudaCall(CudaDriverApi.cuMemAlloc(ref dataPtr, (uint) dataLength));
+
+                CudaRunTimeApi.CudaCall(CudaRunTimeApi.cuMemAlloc(ref dataPtr, (uint)dataLength));
+                CudaRunTimeApi.CudaCall(CudaRunTimeApi.cudaMemcpy(dataPtr.ToPointer(), new IntPtr(data2Cpy.Pointer), (uint) dataLength, CudaMemCpyKind.cudaMemcpyHostToDevice ));
+                // CudaDriverApi.CudaCall(CudaDriverApi.cuMemcpyHtoD(ref dataPtr, data2Cpy.Pointer, (uint) dataLength));
             }
             else
             {
@@ -87,7 +90,9 @@ namespace OptixCore.Library.Prime
             {
                 var memory = new Memory<T>(result);
                 var mh = memory.Pin();
-                CudaInterop.CudaCall(CudaInterop.cuMemcpyDtoH(mh.Pointer, ref _dataPointer, (uint)size));
+                //CudaDriverApi.CudaCall(CudaDriverApi.cuMemcpyDtoH(mh.Pointer, ref _dataPointer, (uint)size));
+
+                CudaRunTimeApi.CudaCall(CudaRunTimeApi.cudaMemcpy(mh.Pointer, _dataPointer, (uint)size, CudaMemCpyKind.cudaMemcpyDeviceToHost));
                 mh.Dispose();
             }
 
@@ -108,7 +113,9 @@ namespace OptixCore.Library.Prime
         {
             if (_fmt.Type == RTPBufferType.CudaLinear)
             {
-                CudaInterop.CudaCall(CudaInterop.cuMemFree(_dataPointer));
+                //CudaDriverApi.CudaCall(CudaDriverApi.cuMemFree(_dataPointer));
+                CudaRunTimeApi.CudaCall(CudaRunTimeApi.cudaFree(_dataPointer));
+
             }
             else
             {

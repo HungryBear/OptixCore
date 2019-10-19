@@ -28,7 +28,7 @@ namespace OptixCore.Library.Prime
 
         public void InitCuda()
         {
-            CudaInterop.CudaCall(CudaInterop.cuInit(0));
+            //CudaDriverApi.CudaCall(CudaDriverApi.cuInit(0));
         }
 
         protected virtual void Dispose(bool disposing)

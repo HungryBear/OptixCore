@@ -11,24 +11,27 @@ namespace OptixCore.PrimeSample
         {
             using (var ctx = new PrimeContext())
             {
-                ctx.InitCuda();
+                //ctx.InitCuda();
                 Console.WriteLine("Context is created");
-                Vector3[] vertices =
-                {
-                    new Vector3(0.0f),
-                    new Vector3(1.0f, 0.0f, 0.0f),
-                    new Vector3(1.0f, 1.0f, 0.0f),
-                };
-                using (var vertexBuffer = ctx.CreateBuffer(RTPBufferType.CudaLinear, RtpBufferFormat.VERTEX_FLOAT3, vertices))
-                {
-                    vertexBuffer.Lock();
-                    var data = vertexBuffer.GetData<Vector3>();
-                    foreach (var vector3 in data)
-                    {
-                        Console.WriteLine(vector3);
-                    }
-                    vertexBuffer.Unlock();
-                }
+                Simple(ctx);
+                //Vector3[] vertices =
+                //{
+                //    new Vector3(0.0f),
+                //    new Vector3(1.0f, 0.0f, 0.0f),
+                //    new Vector3(1.0f, 1.0f, 0.0f),
+                //};
+                //using (var vertexBuffer = ctx.CreateBuffer(RTPBufferType.CudaLinear, RtpBufferFormat.VERTEX_FLOAT3, vertices))
+                //{
+                //    //vertexBuffer.SetRange(0, 3);
+
+                //    //vertexBuffer.Lock();
+                //    var data = vertexBuffer.GetData<Vector3>();
+                //    foreach (var vector3 in data)
+                //    {
+                //        Console.WriteLine(vector3);
+                //    }
+                //    //vertexBuffer.Unlock();
+                //}
 
                 //Simple(ctx);
             }
@@ -62,16 +65,16 @@ namespace OptixCore.PrimeSample
 
                         var rayHit = new Hit();
                         var hitData = new[] { rayHit };
-                        using (var rayBuffer = ctx.CreateBuffer(RTPBufferType.Host,
+                        using (var rayBuffer = ctx.CreateBuffer(RTPBufferType.CudaLinear,
                             RtpBufferFormat.RTP_BUFFER_FORMAT_RAY_ORIGIN_TMIN_DIRECTION_TMAX, new[] { r }))
                         {
                             //rayBuffer.SetRange(0,1);
 
                             using (var hitBuffer =
-                                ctx.CreateBuffer(RTPBufferType.Host,
+                                ctx.CreateBuffer(RTPBufferType.CudaLinear,
                                     RtpBufferFormat.RTP_BUFFER_FORMAT_HIT_T_TRIID_U_V, hitData))
                             {
-                                using (var query = new PrimeQuery(ctx, model, QueryType.ClosestHit))
+                                using (var query = new PrimeQuery(ctx, model, QueryType.AnyHit))
                                 {
                                     query.SetRays(rayBuffer);
                                     query.SetHits(hitBuffer);
@@ -85,6 +88,10 @@ namespace OptixCore.PrimeSample
                                         {
                                             Console.ForegroundColor = ConsoleColor.Green;
                                             Console.WriteLine("Hit!");
+                                        }
+                                        else
+                                        {
+                                            Console.WriteLine("no hit");
                                         }
                                     }
                                 }
