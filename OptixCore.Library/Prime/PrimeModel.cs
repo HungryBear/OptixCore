@@ -1,4 +1,5 @@
-﻿using OptixCore.Library.Native.Prime;
+﻿using System;
+using OptixCore.Library.Native.Prime;
 
 namespace OptixCore.Library.Prime
 {
@@ -12,6 +13,23 @@ namespace OptixCore.Library.Prime
         public override void Validate()
         {
             
+        }
+
+        public void SetTriangles(PrimeBuffer indices, PrimeBuffer vertices)
+        {
+            CheckError(PrimeApi.rtpModelSetTriangles(InternalPtr, 
+                indices?.InternalPtr ?? IntPtr.Zero, 
+                vertices.InternalPtr));
+        }
+
+        public void SetInstances(PrimeBuffer instances, PrimeBuffer transforms)
+        {
+            CheckError(PrimeApi.rtpModelSetInstances(InternalPtr, instances.InternalPtr, transforms.InternalPtr));
+        }
+
+        public void Finish()
+        {
+            CheckError(PrimeApi.rtpModelFinish(InternalPtr));
         }
 
         public void Update(uint hints)

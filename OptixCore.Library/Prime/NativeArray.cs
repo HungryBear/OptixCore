@@ -10,7 +10,7 @@ namespace OptixCore.Library.Prime
 
         int sizeofT => Marshal.SizeOf(typeof(T));
 
-        private int _length;
+        private readonly int _length;
         public T this[int i]
         {
             get => (T)Marshal.PtrToStructure(arrayPtr + i * sizeofT, typeof(T));
@@ -33,7 +33,7 @@ namespace OptixCore.Library.Prime
         }
         ~NativeArray()
         {
-            GC.AddMemoryPressure(sizeofT * _length);
+            GC.RemoveMemoryPressure(sizeofT * _length);
             Marshal.FreeHGlobal(arrayPtr);
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using OptixCore.Library.Native;
 using OptixCore.Library.Native.Prime;
 
 namespace OptixCore.Library.Prime
@@ -12,10 +13,22 @@ namespace OptixCore.Library.Prime
             CheckError(PrimeApi.rtpContextCreate(RTPcontexttype.RTP_CONTEXT_TYPE_CUDA, out InternalPtr));
         }
 
+        public PrimeBuffer CreateBuffer<T>(RTPBufferType type, RtpBufferFormat format, T[] data)
+            where T: struct
+        {
+            var desc = new PrimeBufferDesc { Type = type, Format = format};
+            return PrimeBuffer.Create(this, desc, data);
+        }
+
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public void InitCuda()
+        {
+            CudaInterop.CudaCall(CudaInterop.cuInit(0));
         }
 
         protected virtual void Dispose(bool disposing)

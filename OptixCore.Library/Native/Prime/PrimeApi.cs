@@ -31,6 +31,9 @@ namespace OptixCore.Library.Native.Prime
         public static extern RTPresult rtpBufferDescCreate(RTPcontext context, RTPbufferformat format, RTPbuffertype type, IntPtr buffer, out RTPbufferdesc desc);
 
         [DllImport(OptixLibraries.OptixPrimeLib, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+        public static extern RTPresult rtpBufferDescSetRange(ref RTPbufferdesc desc, RTPsize begin, RTPsize end);
+
+        [DllImport(OptixLibraries.OptixPrimeLib, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         public static extern RTPresult rtpBufferDescGetContext(RTPbufferdesc desc, out RTPcontext context);
 
         [DllImport(OptixLibraries.OptixPrimeLib, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
