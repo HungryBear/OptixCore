@@ -18,10 +18,10 @@ namespace Playground
             //    Console.WriteLine($"Paging force-disabled {ctx.IsGpuPagingForcedlyDisabled}");
             //}
 
-            using (var window = new TraversalWindow())
+            using (var window = new PrimeWindow())
             {
                 window.Run();
             }
         }
-    }
+    } 
 }

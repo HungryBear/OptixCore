@@ -1,7 +1,12 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using System.Numerics;
+using OptixCore.Library;
 using OptixCore.Library.Native.Prime;
 using OptixCore.Library.Prime;
+using OptixCore.Library.Scene;
+using RayFormat = OptixCore.Library.Prime.RayFormat;
 
 namespace OptixCore.PrimeSample
 {
@@ -9,31 +14,75 @@ namespace OptixCore.PrimeSample
     {
         static void Main(string[] args)
         {
-            using (var ctx = new PrimeContext())
+            //using (var ctx = new PrimeContext())
+            //{
+            //    Console.WriteLine("Context is created");
+            //    Simple(ctx);
+            //}
+            ICamera Camera;
+            int Width = 320, Height = 200;
+
+            Camera = new Camera();
+            Camera.Aspect = (float)Width / (float)Height;
+            Camera.Fov = 30;
+            Camera.RotationVel = 100.0f;
+            Camera.TranslationVel = 500.0f;
+
+            //sibenik camera position
+            //Camera.LookAt(new Vector3(-19.5f, -10.3f, .8f), new Vector3(0.0f, -13.3f, .8f), Vector3.UnitY);
+            
+            
+            PrimeEngine.Ray[] CreateRays()
             {
-                //ctx.InitCuda();
-                Console.WriteLine("Context is created");
-                Simple(ctx);
-                //Vector3[] vertices =
-                //{
-                //    new Vector3(0.0f),
-                //    new Vector3(1.0f, 0.0f, 0.0f),
-                //    new Vector3(1.0f, 1.0f, 0.0f),
-                //};
-                //using (var vertexBuffer = ctx.CreateBuffer(RTPBufferType.CudaLinear, RtpBufferFormat.VERTEX_FLOAT3, vertices))
-                //{
-                //    //vertexBuffer.SetRange(0, 3);
+                PrimeEngine.Ray[] rays = new PrimeEngine.Ray[Width * Height];
 
-                //    //vertexBuffer.Lock();
-                //    var data = vertexBuffer.GetData<Vector3>();
-                //    foreach (var vector3 in data)
-                //    {
-                //        Console.WriteLine(vector3);
-                //    }
-                //    //vertexBuffer.Unlock();
-                //}
+                for (int x = 0; x < Width; x++)
+                {
+                    for (int y = 0; y < Height; y++)
+                    {
+                        Vector2 d = new Vector2(x, y) / new Vector2(Width, Height) * 2.0f - new Vector2(1.0f);
 
-                //Simple(ctx);
+                        PrimeEngine.Ray ray = new PrimeEngine.Ray
+                        {
+                            origin = Camera.Position,
+                            tmin = 1e-4f,
+                            dir = (d.X * Camera.Right + d.Y * Camera.Up + Camera.Look).NormalizedCopy(),
+                            tmax = 1e34f
+                        };
+
+                        rays[y * Width + x] = ray;
+                    }
+                }
+
+                return rays;
+            }
+
+            using (var engine = new PrimeEngine(RayFormat.OriginDirectionMinMaxInterleaved, RayHitType.Closest))
+            {
+                var modelName = "cornell-box.obj";
+                var modelPath = Path.GetFullPath(@"..\..\..\..\Assets\Models\" + modelName);
+                var model = new OBJLoader(modelPath);
+
+                model.ParseMaterials = false;
+                model.ParseNormals = false;
+                model.GenerateNormals = false;
+                model.GenerateGeometry = false;
+                model.LoadContent();
+                Camera.CenterOnBoundingBox(model.BBox);
+
+                var verts = new Vector3[model.Positions.Count];
+                var tris = new Int3[model.Groups[0].VIndices.Count];
+
+                model.Positions.CopyTo(verts);
+                model.Groups[0].VIndices.CopyTo(tris);
+                var indexes = tris.SelectMany(c => new[] { c.X, c.Y, c.Z }).ToArray();
+                Console.WriteLine("Setting Mesh");
+                engine.SetMesh(verts, indexes);
+                Console.WriteLine("Setting Rays");
+                engine.SetRays(CreateRays());
+                Console.WriteLine("Querying Prime");
+                var hits = engine.Query();
+                Console.WriteLine($"Successful hits {hits.Count(p=>p.t < 1e34f && p.t > 1e-4f)}");
             }
         }
 
@@ -47,58 +96,45 @@ namespace OptixCore.PrimeSample
                 };
             int[] indices = { 0, 2, 1 };
 
-            using (var vertexBuffer = ctx.CreateBuffer(RTPBufferType.Host, RtpBufferFormat.VERTEX_FLOAT3, vertices))
+            var vertexBuffer = ctx.CreateBuffer(RTPBufferType.Host, RtpBufferFormat.VERTEX_FLOAT3, vertices);
+
+            var indexBuffer = ctx.CreateBuffer(RTPBufferType.Host, RtpBufferFormat.IndicesInt3, indices);
+            using (var model = new PrimeModel(ctx))
             {
-                //vertexBuffer.SetRange(0, 3);
-                var data = vertexBuffer.GetData<Vector3>();
+                model.SetTriangles(indexBuffer, vertexBuffer);
+                model.Update(0);
 
-                using (var indexBuffer = ctx.CreateBuffer(RTPBufferType.Host, RtpBufferFormat.IndicesInt3, indices))
-                {
-                    //indexBuffer.SetRange(0, 1);
-                    using (var model = new PrimeModel(ctx))
+                var r = new Ray
+                { origin = new Vector3(0.3f, 0.3f, -0.1f), dir = new Vector3(0, 0, 0.99f), tmax = 1e34f };
+
+                var rayHit = new Hit();
+                var hitData = new[] { rayHit };
+                var rayBuffer = ctx.CreateBuffer(RTPBufferType.CudaLinear,
+                    RtpBufferFormat.RTP_BUFFER_FORMAT_RAY_ORIGIN_TMIN_DIRECTION_TMAX, new[] {r});
+                
+                    var hitBuffer = ctx.CreateBuffer(RTPBufferType.CudaLinear, RtpBufferFormat.RTP_BUFFER_FORMAT_HIT_T_TRIID_U_V, hitData);
                     {
-                        model.SetTriangles(indexBuffer, vertexBuffer);
-                        model.Update(0);
-
-                        var r = new Ray
-                        { origin = new Vector3(0.3f, 0.3f, -0.1f), dir = new Vector3(0, 0, 0.99f), tmax = 1e34f };
-
-                        var rayHit = new Hit();
-                        var hitData = new[] { rayHit };
-                        using (var rayBuffer = ctx.CreateBuffer(RTPBufferType.CudaLinear,
-                            RtpBufferFormat.RTP_BUFFER_FORMAT_RAY_ORIGIN_TMIN_DIRECTION_TMAX, new[] { r }))
+                        using (var query = new PrimeQuery(ctx, model, QueryType.AnyHit))
                         {
-                            //rayBuffer.SetRange(0,1);
+                            query.SetRays(rayBuffer);
+                            query.SetHits(hitBuffer);
+                            query.Execute(0);
+                            query.Finish();
 
-                            using (var hitBuffer =
-                                ctx.CreateBuffer(RTPBufferType.CudaLinear,
-                                    RtpBufferFormat.RTP_BUFFER_FORMAT_HIT_T_TRIID_U_V, hitData))
+
+                            foreach (var hit in hitBuffer.GetData<Hit>())
                             {
-                                using (var query = new PrimeQuery(ctx, model, QueryType.AnyHit))
+                                if (hit.t > 0 && hit.t < 1e34f)
                                 {
-                                    query.SetRays(rayBuffer);
-                                    query.SetHits(hitBuffer);
-                                    query.Execute(0);
-                                    query.Finish();
-
-
-                                    foreach (var hit in hitBuffer.GetData<Hit>())
-                                    {
-                                        if (hit.t > 0 && hit.t < 1e34f)
-                                        {
-                                            Console.ForegroundColor = ConsoleColor.Green;
-                                            Console.WriteLine("Hit!");
-                                        }
-                                        else
-                                        {
-                                            Console.WriteLine("no hit");
-                                        }
-                                    }
+                                    Console.ForegroundColor = ConsoleColor.Green;
+                                    Console.WriteLine("Hit!");
+                                }
+                                else
+                                {
+                                    Console.WriteLine("no hit");
                                 }
                             }
                         }
-
-                    }
                 }
             }
         }

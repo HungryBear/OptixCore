@@ -26,7 +26,7 @@ namespace OptixCore.Library.Native
     {
         internal const string RunTimeAPIDll = "cudart64_101.dll";
         [DllImport(RunTimeAPIDll, EntryPoint = "cudaMalloc")]
-        public static extern CudaResult cuMemAlloc(ref IntPtr dptr, uint bytesize);
+        public static extern CudaResult cudaMalloc(ref IntPtr dptr, uint bytesize);
 
         [DllImport(RunTimeAPIDll, EntryPoint = "cudaFree")]
         public static extern CudaResult cudaFree(IntPtr devPtr);
@@ -34,11 +34,15 @@ namespace OptixCore.Library.Native
         [DllImport(RunTimeAPIDll, EntryPoint = "cudaMemcpy")]
         public static extern CudaResult cudaMemcpy(void* dst, IntPtr src, uint bytesize, CudaMemCpyKind kind);
 
+        [DllImport(RunTimeAPIDll, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl, EntryPoint = "cudaGetErrorString")]
+        public static extern string cudaGetErrorString(CudaResult c, [MarshalAs(UnmanagedType.LPStr)]out string returnString);
+
         public static void CudaCall(CudaResult result)
         {
             if (result != CudaResult.Success)
             {
-                throw new ApplicationException(result.ToString());
+                cudaGetErrorString(result, out var str);
+                throw new ApplicationException(str);
             }
         }
     }

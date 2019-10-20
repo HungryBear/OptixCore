@@ -3,11 +3,6 @@ using OptixCore.Library.Native.Prime;
 
 namespace OptixCore.Library.Prime
 {
-    public enum RtpBufferType
-    {
-        Host = RTPbuffertype.RTP_BUFFER_TYPE_HOST,
-        Cuda = RTPbuffertype.RTP_BUFFER_TYPE_CUDA_LINEAR
-    }
 
     public enum RtpBufferFormat
     {
@@ -54,17 +49,17 @@ namespace OptixCore.Library.Prime
         ///		float tmax;
         ///	}
         /// </summary>
-        OriginDirectionMinMaxInterleaved	 = 0,
+        OriginDirectionMinMaxInterleaved = 0,
 
-		/// <summary>
-		/// Describes a ray format with interleaved origin, direction
-		/// e.g. ray {
-		///		float3 origin;
-		///		float3 dir;
-		///	}
-		/// </summary>
-		OriginDirectionInterleaved			 = 1,
-	};
+        /// <summary>
+        /// Describes a ray format with interleaved origin, direction
+        /// e.g. ray {
+        ///		float3 origin;
+        ///		float3 dir;
+        ///	}
+        /// </summary>
+        OriginDirectionInterleaved = 1,
+    };
 
     /// <summary>
     /// The input format of the triangles.
@@ -72,9 +67,9 @@ namespace OptixCore.Library.Prime
     /// </summary>
     public enum TriFormat
     {
-        Mesh			= 0,
-		TriangleSoup	= 1,
-	};
+        Mesh = 0,
+        TriangleSoup = 1,
+    };
 
     /// <summary>
     /// Initialization options (static across life of traversal object).
@@ -92,10 +87,10 @@ namespace OptixCore.Library.Prime
     [Flags]
     public enum InitOptions
     {
-        None			= 0,
-		GpuOnly			= 1<<0,
-		CpuOnly			= 1 << 1,
-		CullBackFace	= 1 << 2
+        None = 0,
+        GpuOnly = 1 << 0,
+        CpuOnly = 1 << 1,
+        CullBackFace = 1 << 2
     };
 
     public enum RunTimeOptions
@@ -106,22 +101,22 @@ namespace OptixCore.Library.Prime
     [Flags]
     public enum TraversalOutput
     {
-        None		= 0,
+        None = 0,
 
-		/// <summary>
-		/// Outputs a float3 normal
-		/// </summary>
-		Normal		= 1<<0,
-										 
-		/// <summary>
-		/// float2 [alpha, beta] (gamma implicit)
-		/// </summary>
-		BaryCentric	= 1<<1,
+        /// <summary>
+        /// Outputs a float3 normal
+        /// </summary>
+        Normal = 1 << 0,
 
-		/// <summary>
-		///  char   [1 | 0]
-		/// </summary>
-		BackFacing	= 1<<2
+        /// <summary>
+        /// float2 [alpha, beta] (gamma implicit)
+        /// </summary>
+        BaryCentric = 1 << 1,
+
+        /// <summary>
+        ///  char   [1 | 0]
+        /// </summary>
+        BackFacing = 1 << 2
     };
 
 
@@ -133,32 +128,28 @@ namespace OptixCore.Library.Prime
     };
 
 
-    public abstract class OptixPrimeNode : IDisposable
+    public abstract class OptixPrimeNode : BasePrimeEntity, IDisposable
     {
         public abstract void Validate();
         public abstract void Destroy();
 
-        public virtual void CheckError(object result)
-        {
-
-        }
-
         protected internal PrimeContext mContext;
-        protected internal IntPtr InternalPtr;
 
         protected OptixPrimeNode(PrimeContext context)
         {
             this.mContext = context;
         }
 
-        internal void CheckError(RTPresult result)
+        internal new void CheckError(RTPresult result)
         {
             if (result != RTPresult.RTP_SUCCESS)
             {
-                PrimeApi.rtpGetErrorString(result, out var message);
-                throw new OptixException($"Optix context error : {message}");
+                PrimeApi.rtpGetErrorString(result, out var Errormessage);
+                throw new OptixException($"Optix context error : {Errormessage}");
+
             }
         }
+
 
         public void Dispose()
         {

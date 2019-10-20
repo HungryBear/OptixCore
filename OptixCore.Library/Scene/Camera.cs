@@ -110,11 +110,8 @@ namespace OptixCore.Library.Scene
 
             L = Vector3.Normalize(L);
 
-            Vector3 R = Vector3.Cross(L, _up);
-            Vector3 U = Vector3.Cross(R, L);
+            mRight = Vector3.Cross(L, _up);
 
-            mUp = U;
-            mRight = R;
             Position = pos;
             Target = target;
 
@@ -132,7 +129,6 @@ namespace OptixCore.Library.Scene
             mUp = Vector3.Cross(mRight, mLook);
             mUp = Vector3.Normalize(mUp);
 
-            mRight = Vector3.Cross(mLook, mUp);
             mRight = Vector3.Normalize(mRight);
         }
 

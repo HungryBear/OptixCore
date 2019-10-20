@@ -32,9 +32,9 @@ namespace OptixCore.Library.Prime
             CheckError(PrimeApi.rtpModelFinish(InternalPtr));
         }
 
-        public void Update(uint hints)
+        internal void Update(RTPmodelhint hints)
         {
-            CheckError(PrimeApi.rtpModelUpdate(InternalPtr, hints));
+            CheckError(PrimeApi.rtpModelUpdate(InternalPtr, (uint)hints));
         }
 
         public override void Destroy()

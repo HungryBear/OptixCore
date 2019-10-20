@@ -1,23 +1,25 @@
 ﻿using System;
-using OptixCore.Library.Native;
+using System.Collections.Generic;
 using OptixCore.Library.Native.Prime;
 
 namespace OptixCore.Library.Prime
 {
-    public class PrimeContext : IDisposable
+    public class PrimeContext : BasePrimeEntity, IDisposable
     {
-        protected internal IntPtr InternalPtr;
-
-        public PrimeContext()
+        private List<IDisposable> _buffers;
+        public PrimeContext(bool useCuda = false)
         {
-            CheckError(PrimeApi.rtpContextCreate(RTPcontexttype.RTP_CONTEXT_TYPE_CUDA, out InternalPtr));
+            _buffers = new List<IDisposable>();
+            CheckError(PrimeApi.rtpContextCreate(useCuda ? RTPcontexttype.RTP_CONTEXT_TYPE_CUDA : RTPcontexttype.RTP_CONTEXT_TYPE_CPU, out InternalPtr));
         }
 
         public PrimeBuffer CreateBuffer<T>(RTPBufferType type, RtpBufferFormat format, T[] data)
-            where T: struct
+            where T : struct
         {
-            var desc = new PrimeBufferDesc { Type = type, Format = format};
-            return PrimeBuffer.Create(this, desc, data);
+            var desc = new PrimeBufferDesc { Type = type, Format = format };
+            var buffer = PrimeBuffer.Create(this, desc, data);
+            _buffers.Add(buffer);
+            return buffer;
         }
 
         public void Dispose()
@@ -41,6 +43,11 @@ namespace OptixCore.Library.Prime
 
         private void Destroy()
         {
+            foreach (var disposable in _buffers)
+            {
+                disposable.Dispose();
+            }
+            _buffers.Clear();
             if (InternalPtr != IntPtr.Zero)
             {
                 CheckError(PrimeApi.rtpContextDestroy(InternalPtr));
@@ -48,13 +55,6 @@ namespace OptixCore.Library.Prime
             }
         }
 
-        internal void CheckError(RTPresult result)
-        {
-            if (result != RTPresult.RTP_SUCCESS)
-            {
-                PrimeApi.rtpGetErrorString(result, out var message);
-                throw new OptixException($"Optix context error : {message}");
-            }
-        }
+ 
     }
 }
