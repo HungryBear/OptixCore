@@ -15,14 +15,16 @@ namespace OptixCore.Library.Prime
 
         private RayFormat _rayFormat;
         private RayHitType _hitType;
+        private readonly RTPBufferType _bufferType;
 
         private PrimeBuffer _rayBuffer, _hitBuffer;
 
-        public PrimeEngine(RayFormat rayFormat, RayHitType hitType)
+        public PrimeEngine(RayFormat rayFormat, RayHitType hitType, RTPBufferType bufferType=RTPBufferType.Host, bool useCPU = false)
         {
             _rayFormat = rayFormat;
             _hitType = hitType;
-            _context = new PrimeContext(false);
+            _bufferType = bufferType;
+            _context = new PrimeContext(!useCPU);
         }
 
         public void SetMesh(Vector3[] vertices, int[] indices)
@@ -42,17 +44,20 @@ namespace OptixCore.Library.Prime
             _model.Finish();
         }
 
-        public void SetRays(Ray[] rays)
+        public void SetRays<T>(T[] rays)
+            where T : struct
         {
             if (_query == null)
                 _query = new PrimeQuery(_context, _model, QueryType.ClosestHit);
 
             if (_rayBuffer == null)
             {
-                _rayBuffer = _context.CreateBuffer(RTPBufferType.Host,
-                    RtpBufferFormat.RTP_BUFFER_FORMAT_RAY_ORIGIN_TMIN_DIRECTION_TMAX, rays);
+                _rayBuffer = _context.CreateBuffer(_bufferType,
+                    _rayFormat == RayFormat.OriginDirectionMinMaxInterleaved ?
+                    RtpBufferFormat.RTP_BUFFER_FORMAT_RAY_ORIGIN_TMIN_DIRECTION_TMAX
+                    : RtpBufferFormat.RTP_BUFFER_FORMAT_RAY_ORIGIN_DIRECTION, rays);
                 //_rayBuffer.SetRange(0u, (ulong)rays.Length);
-                _hitBuffer = _context.CreateBuffer(RTPBufferType.Host,
+                _hitBuffer = _context.CreateBuffer(_bufferType,
                     RtpBufferFormat.RTP_BUFFER_FORMAT_HIT_T_TRIID_U_V, Enumerable.Repeat(new Hit { t = 1e-4f }, rays.Length).ToArray());
                 //_hitBuffer.SetRange(0u, (ulong)rays.Length);
                 //_hitBuffer.Lock();
@@ -70,16 +75,11 @@ namespace OptixCore.Library.Prime
             _query.Execute(0);
             _query.Finish();
 
-            _model.Validate();
             return _hitBuffer.GetData<Hit>();
         }
 
-
-
-
         public void Dispose()
         {
-            _hitBuffer?.Unlock();
             _query?.Dispose();
             _model?.Dispose();
             _context?.Dispose();
@@ -100,6 +100,15 @@ namespace OptixCore.Library.Prime
                 return $"{origin}|{dir}|[{tmin},{tmax}]";
             }
         };
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RayMinMax
+        {
+            public Vector3 origin;
+            public Vector3 dir;
+
+        }
+
         [StructLayout(LayoutKind.Sequential)]
         public struct Hit
         {

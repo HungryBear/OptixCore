@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using OptixCore.Library.Native.Prime;
 
 namespace OptixCore.Library.Prime
@@ -11,6 +12,13 @@ namespace OptixCore.Library.Prime
         {
             _buffers = new List<IDisposable>();
             CheckError(PrimeApi.rtpContextCreate(useCuda ? RTPcontexttype.RTP_CONTEXT_TYPE_CUDA : RTPcontexttype.RTP_CONTEXT_TYPE_CPU, out InternalPtr));
+            CheckError(PrimeApi.rtpContextSetCudaDeviceNumbers(InternalPtr, 0, 0));
+        }
+
+        public string GetVersion()
+        {
+            CheckError(PrimeApi.rtpGetVersionString(out var str));
+            return Marshal.PtrToStringAnsi(str);
         }
 
         public PrimeBuffer CreateBuffer<T>(RTPBufferType type, RtpBufferFormat format, T[] data)

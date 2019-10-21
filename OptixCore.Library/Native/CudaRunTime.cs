@@ -35,13 +35,13 @@ namespace OptixCore.Library.Native
         public static extern CudaResult cudaMemcpy(void* dst, IntPtr src, uint bytesize, CudaMemCpyKind kind);
 
         [DllImport(RunTimeAPIDll, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl, EntryPoint = "cudaGetErrorString")]
-        public static extern string cudaGetErrorString(CudaResult c, [MarshalAs(UnmanagedType.LPStr)]out string returnString);
+        public static extern IntPtr cudaGetErrorString(CudaResult c);
 
         public static void CudaCall(CudaResult result)
         {
             if (result != CudaResult.Success)
             {
-                cudaGetErrorString(result, out var str);
+                var str = Marshal.PtrToStringAnsi(cudaGetErrorString(result));
                 throw new ApplicationException(str);
             }
         }

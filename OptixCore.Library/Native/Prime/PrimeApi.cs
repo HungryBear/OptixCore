@@ -25,7 +25,7 @@ namespace OptixCore.Library.Native.Prime
         public static extern RTPresult rtpContextDestroy(RTPcontext context);
 
         [DllImport(OptixLibraries.OptixPrimeLib, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern RTPresult rtpContextGetLastErrorString(RTPcontext context, [MarshalAs(UnmanagedType.LPStr)]out string returnString);
+        public static extern RTPresult rtpContextGetLastErrorString(RTPcontext context, out IntPtr returnString);
 
         [DllImport(OptixLibraries.OptixPrimeLib, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         public static extern RTPresult rtpBufferDescCreate(RTPcontext context, RTPbufferformat format, RTPbuffertype type, IntPtr buffer, out RTPbufferdesc desc);
@@ -91,11 +91,11 @@ namespace OptixCore.Library.Native.Prime
         [DllImport(OptixLibraries.OptixPrimeLib, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         public static extern RTPresult rtpHostBufferUnlock(IntPtr buffer);
         [DllImport(OptixLibraries.OptixPrimeLib, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern RTPresult rtpGetErrorString(RTPresult errorCode, [MarshalAs(UnmanagedType.LPStr)]out string errorString );
+        public static extern RTPresult rtpGetErrorString(RTPresult errorCode, out IntPtr errorString );
         [DllImport(OptixLibraries.OptixPrimeLib, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         public static extern RTPresult rtpGetVersion( out uint version);
         [DllImport(OptixLibraries.OptixPrimeLib, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern RTPresult rtpGetVersionString( [MarshalAs(UnmanagedType.LPStr)]out string versionString );
+        public static extern RTPresult rtpGetVersionString(out IntPtr versionString );
     }
 
 }

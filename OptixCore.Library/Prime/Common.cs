@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using OptixCore.Library.Native.Prime;
 
 namespace OptixCore.Library.Prime
@@ -145,7 +146,8 @@ namespace OptixCore.Library.Prime
             if (result != RTPresult.RTP_SUCCESS)
             {
                 PrimeApi.rtpGetErrorString(result, out var Errormessage);
-                throw new OptixException($"Optix context error : {Errormessage}");
+
+                throw new OptixException($"Optix context error : {Marshal.PtrToStringAnsi(Errormessage)}");
 
             }
         }
