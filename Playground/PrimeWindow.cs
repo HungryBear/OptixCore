@@ -78,9 +78,9 @@ namespace Playground
                 for (int i = 0; i < mNormals.Length; i++)
                 {
                     if (hits[i].t > 1e-4f)
-                        mNormals[i] = hits[i].t * new Vector3(.5f,0,0) + new Vector3(.5f,0,0);
+                        mNormals[i] = (hits[i].t/10f) * new Vector3(.5f,hits[i].u,0) + new Vector3(.5f,0, hits[i].v);
                     else
-                        mNormals[i] = rays[i].dir.Z * new Vector3(.5f) + new Vector3(.5f);
+                        mNormals[i] = new Vector3(.5f);
                 }
 
                 mUpdateNormals = false;
@@ -131,7 +131,7 @@ namespace Playground
 
             //sibenik camera position
             Camera.LookAt(new Vector3(-19.5f, -10.3f, .8f), new Vector3(0.0f, -13.3f, .8f), Vector3.UnitY);
-            Camera.CenterOnBoundingBox( box );
+            //Camera.CenterOnBoundingBox( box );
 
         }
 

@@ -36,11 +36,12 @@ namespace OptixCore.Library.Prime
 
             var vertexBuffer = _context.CreateBuffer(RTPBufferType.Host, RtpBufferFormat.VERTEX_FLOAT3, vertices);
             var indexBuffer = _context.CreateBuffer(RTPBufferType.Host, RtpBufferFormat.IndicesInt3, indices);
-            //indexBuffer.SetRange(0u, (uint)(indices.Length / 3));
-            //vertexBuffer.SetRange(0u, (uint)vertices.Length);
+            indexBuffer.SetRange(0u, (uint)(indices.Length / 3));
+            vertexBuffer.SetRange(0u, (uint)vertices.Length);
 
             _model.SetTriangles(indexBuffer, vertexBuffer);
-            _model.Update(RTPmodelhint.RTP_MODEL_HINT_ASYNC);
+
+            _model.Update(RTPmodelhint.RTP_MODEL_HINT_NONE);
             _model.Finish();
         }
 
@@ -56,10 +57,10 @@ namespace OptixCore.Library.Prime
                     _rayFormat == RayFormat.OriginDirectionMinMaxInterleaved ?
                     RtpBufferFormat.RTP_BUFFER_FORMAT_RAY_ORIGIN_TMIN_DIRECTION_TMAX
                     : RtpBufferFormat.RTP_BUFFER_FORMAT_RAY_ORIGIN_DIRECTION, rays);
-                //_rayBuffer.SetRange(0u, (ulong)rays.Length);
+                _rayBuffer.SetRange(0u, (ulong)rays.Length);
                 _hitBuffer = _context.CreateBuffer(_bufferType,
                     RtpBufferFormat.RTP_BUFFER_FORMAT_HIT_T_TRIID_U_V, Enumerable.Repeat(new Hit { t = 1e-4f }, rays.Length).ToArray());
-                //_hitBuffer.SetRange(0u, (ulong)rays.Length);
+                _hitBuffer.SetRange(0u, (ulong)rays.Length);
                 //_hitBuffer.Lock();
                 _query.SetRays(_rayBuffer);
                 _query.SetHits(_hitBuffer);

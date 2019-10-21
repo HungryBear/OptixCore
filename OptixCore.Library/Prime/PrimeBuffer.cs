@@ -53,7 +53,7 @@ namespace OptixCore.Library.Prime
 
         public void SetRange(ulong begin, ulong end)
         {
-            CheckError(PrimeApi.rtpBufferDescSetRange(ref InternalPtr, begin, end));
+            CheckError(PrimeApi.rtpBufferDescSetRange(InternalPtr, begin, end));
         }
 
         public void SetStride(uint bytes)
