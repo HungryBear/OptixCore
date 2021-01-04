@@ -82,7 +82,7 @@ namespace OptixCore.Library
         public void SetSurfaceProgram(int rayTypeIndex, SurfaceProgram program)
         {
             if (program == null)
-                throw new ArgumentNullException("program", "Material Error: program cannot be null!");
+                throw new ArgumentNullException("program", "DefaultMaterial Error: program cannot be null!");
 
             if (rayTypeIndex >= mContext.RayTypeCount)
                 throw new ArgumentOutOfRangeException("rayTypeIndex", "rayTypeIndex cannot exceed the RayTypeCount set on the Context");

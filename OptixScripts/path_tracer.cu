@@ -25,6 +25,7 @@
 #include "path_tracer.h"
 #include "random.h"
 
+
 using namespace optix;
 
 struct PerRayData_pathtrace
@@ -180,7 +181,7 @@ RT_PROGRAM void diffuse()
 
 	float3 ffnormal = faceforward( world_shading_normal, -ray.direction, world_geometric_normal );
 
-	float3 hitpoint = ray.origin + t_hit * ray.direction;
+	float3 hitpoint = ray.origin + t_hit * ray.direction; 
 	current_prd.origin = hitpoint;
 
 	float z1=rnd(current_prd.seed);
@@ -260,6 +261,55 @@ RT_PROGRAM void glass_refract()
 	current_prd.radiance = make_float3(0.0f);
 }
 
+RT_PROGRAM void specular()
+{
+	float3 world_shading_normal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD, shading_normal));
+	float3 world_geometric_normal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD, geometric_normal));
+
+	float3 ffnormal = faceforward(world_shading_normal, -ray.direction, world_geometric_normal);
+
+	float3 hitpoint = ray.origin + t_hit * ray.direction;
+	current_prd.origin = hitpoint;
+	current_prd.countEmitted = true;
+	current_prd.radiance = make_float3(0.0f);
+
+	// specular reflection
+	current_prd.direction = reflect(ray.direction, ffnormal);
+	current_prd.attenuation = current_prd.attenuation * diffuse_color;
+}
+/*
+
+
+rtDeclareVariable(float,        phong_exp, , );
+RT_PROGRAM void glossy_metal()
+{
+
+	float3 world_shading_normal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD, shading_normal));
+	float3 world_geometric_normal = normalize(rtTransformNormal(RT_OBJECT_TO_WORLD, geometric_normal));
+
+	float3 ffnormal = faceforward(world_shading_normal, -ray.direction, world_geometric_normal);
+
+	float3 hitpoint = ray.origin + t_hit * ray.direction;
+	float z1 = rand(current_prd.seed, 3 * (current_prd.depth + 1));
+	float z2 = rand(current_prd.seed, 4 * (current_prd.depth + 1));
+	float z3 = powf(fold(z1), 2.0f / (phong_exp + 1.0f));
+	float sintheta = sqrtf(1.0f - z3);
+	float costheta = sqrtf(z3);
+	float phi = (2.0f * M_PIf) * z2;
+	float cosphi = cosf(phi) * sintheta;
+	float sinphi = sinf(phi) * sintheta;
+	float3 v1, v2;
+	create_onb(ffnormal, v1, v2);
+
+	float3 h = ffnormal * costheta + v1 * cosphi + v2 * sinphi;
+	current_prd.origin = hitpoint;
+	current_prd.direction = reflect(ray.direction, h);
+	if (dot(current_prd.direction, ffnormal) < 0.0) current_prd.direction = -current_prd.direction;
+	current_prd.HitEvent = IntersectionFlags::ISECT_SPECULAR;
+	current_prd.throughput = current_prd.throughput * HWSample(current_prd.HeroWavelength, specular_color);
+	current_prd.radiance = make_float4(0.0f);
+}
+*/
 rtDeclareVariable(PerRayData_pathtrace_shadow, current_prd_shadow, rtPayload, );
 
 RT_PROGRAM void shadow()

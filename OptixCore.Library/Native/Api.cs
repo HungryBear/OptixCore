@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
@@ -11,7 +9,7 @@ namespace OptixCore.Library.Native
     internal unsafe class Api
     {
 
-        [DllImport("optixu.1.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(OptixLibraries.OptixULib, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         public static extern RTresult rtuGetSizeForRTformat(RTformat format, out uint size);
         [DllImport(OptixLibraries.OptixLib, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
         public static extern RTresult rtGetVersion(ref uint version);
@@ -896,31 +894,72 @@ namespace OptixCore.Library.Native
         [DllImport(OptixLibraries.OptixLib, EntryPoint = "rtBufferSetAttribute")]
         public static extern RTresult rtBufferSetAttribute(IntPtr buffer, RTbufferattribute attrib, uint size, IntPtr p);
 
-
         [DllImport(OptixLibraries.OptixLib, EntryPoint = "rtBufferGetAttribute")]
         public static extern RTresult rtBufferGetAttribute(IntPtr buffer, RTbufferattribute attrib, uint size, IntPtr p);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtRemoteDeviceCreate")]
+        [DllImport(OptixLibraries.OptixULib, EntryPoint = "rtRemoteDeviceCreate")]
         public static extern RTresult rtRemoteDeviceCreate([In] [MarshalAs(UnmanagedType.LPStr)] string url, [In] [MarshalAs(UnmanagedType.LPStr)] string username, [In] [MarshalAs(UnmanagedType.LPStr)] string password, ref IntPtr remote_dev);
 
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtRemoteDeviceDestroy")]
+        [DllImport(OptixLibraries.OptixULib, EntryPoint = "rtRemoteDeviceDestroy")]
         public static extern RTresult rtRemoteDeviceDestroy(IntPtr remote_dev);
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtRemoteDeviceGetAttribute")]
+        [DllImport(OptixLibraries.OptixULib, EntryPoint = "rtRemoteDeviceGetAttribute")]
         public static extern RTresult rtRemoteDeviceGetAttribute(IntPtr remote_dev, RTremotedeviceattribute attrib, uint size, IntPtr p);
 
 
-        [DllImport("optixu.1.dll", EntryPoint = "rtRemoteDeviceReserve")]
+        [DllImport(OptixLibraries.OptixULib, EntryPoint = "rtRemoteDeviceReserve")]
         public static extern RTresult rtRemoteDeviceReserve(IntPtr remote_dev, uint num_nodes, uint configuration);
 
-
-
-        [DllImport("optixu.1.dll", EntryPoint = "rtRemoteDeviceRelease")]
+        [DllImport(OptixLibraries.OptixULib, EntryPoint = "rtRemoteDeviceRelease")]
         public static extern RTresult rtRemoteDeviceRelease(IntPtr remote_dev);
 
+        [DllImport(OptixLibraries.OptixULib, EntryPoint = "rtPostProcessingStageCreateBuiltin")]
+        public static extern RTresult  rtPostProcessingStageCreateBuiltin(IntPtr context, [In][MarshalAs(UnmanagedType.LPStr)] string builtinName, ref IntPtr stage);
 
+        [DllImport(OptixLibraries.OptixULib, EntryPoint = "rtPostProcessingStageDestroy")]
+        public static extern RTresult rtPostProcessingStageDestroy(IntPtr stage);
+
+        [DllImport(OptixLibraries.OptixULib, EntryPoint = "rtPostProcessingStageDeclareVariable")]
+        public static extern RTresult rtPostProcessingStageDeclareVariable(IntPtr stage,  [In] [MarshalAs(UnmanagedType.LPStr)] string name, ref IntPtr v);
+
+        [DllImport(OptixLibraries.OptixULib, EntryPoint = "rtPostProcessingStageGetContext")]
+        public static extern RTresult rtPostProcessingStageGetContext(IntPtr stage, ref IntPtr context);
+
+        [DllImport(OptixLibraries.OptixULib, EntryPoint = "rtPostProcessingStageQueryVariable")]
+        public static extern RTresult rtPostProcessingStageQueryVariable(IntPtr stage,
+            [In] [MarshalAs(UnmanagedType.LPStr)] string name, ref IntPtr variable);
+ 
+        [DllImport(OptixLibraries.OptixULib, EntryPoint = "rtPostProcessingStageGetVariableCount")]
+        public static extern RTresult rtPostProcessingStageGetVariableCount(IntPtr stage, ref uint count);
+
+        [DllImport(OptixLibraries.OptixULib, EntryPoint = "rtPostProcessingStageGetVariable")]
+        public static extern RTresult rtPostProcessingStageGetVariable(IntPtr stage, uint index, ref IntPtr variable);
+
+
+        [DllImport(OptixLibraries.OptixULib, EntryPoint = "rtCommandListCreate")]
+        public static extern RTresult rtCommandListCreate(IntPtr context, ref IntPtr list);
+
+        [DllImport(OptixLibraries.OptixULib, EntryPoint = "rtCommandListDestroy")]
+        public static extern RTresult rtCommandListDestroy(IntPtr list);
+
+        [DllImport(OptixLibraries.OptixULib, EntryPoint = "rtCommandListAppendPostprocessingStage")]
+        public static extern RTresult rtCommandListAppendPostprocessingStage(IntPtr list, IntPtr stage,
+            RTsize launchWidth, RTsize launchHeight);
+
+        [DllImport(OptixLibraries.OptixULib, EntryPoint = "rtCommandListAppendLaunch2D")]
+        public static extern RTresult rtCommandListAppendLaunch2D(IntPtr list, uint entryPointIndex, RTsize launchWidth,
+            RTsize launchHeight);
+
+        [DllImport(OptixLibraries.OptixULib, EntryPoint = "rtCommandListFinalize")]
+        public static extern RTresult rtCommandListFinalize(IntPtr list);
+
+        [DllImport(OptixLibraries.OptixULib, EntryPoint = "rtCommandListExecute")]
+        public static extern RTresult rtCommandListExecute(IntPtr list);
+
+        [DllImport(OptixLibraries.OptixULib, EntryPoint = "rtCommandListGetContext")]
+        public static extern RTresult rtCommandListGetContext(IntPtr list, ref IntPtr context);
 
     }
 

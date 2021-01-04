@@ -49,6 +49,7 @@
     <CudaCompile Include="vpt.cu">
       <Filter>PathTracer</Filter>
     </CudaCompile>
+    <CudaCompile Include="denoiser.cu" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="commonStructs.h" />
@@ -67,6 +68,8 @@
     <ClInclude Include="math_utils.h" />
     <ClInclude Include="lights.h" />
     <ClInclude Include="scene.h" />
+    <ClInclude Include="lightsampling.h" />
+    <ClInclude Include="optixDenoiser.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Tutorial">

@@ -146,9 +146,7 @@ namespace OptixCore.Library.Prime
             if (result != RTPresult.RTP_SUCCESS)
             {
                 PrimeApi.rtpGetErrorString(result, out var Errormessage);
-
                 throw new OptixException($"Optix context error : {Marshal.PtrToStringAnsi(Errormessage)}");
-
             }
         }
 

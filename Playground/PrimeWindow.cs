@@ -52,8 +52,8 @@ namespace Playground
             var indexes = tris.SelectMany(c => new[] { c.X, c.Y, c.Z }).ToArray();
             mTraversal.SetMesh(verts, indexes);
 
-            int numRays = Width * Height;
-            var rays = CreateRays();
+            var numRays = Width * Height;
+            rays = CreateRays();
             mTraversal.SetRays(rays);
 
             mDepths = new float[numRays];
@@ -104,9 +104,9 @@ namespace Playground
             {
                 for (int y = 0; y < Height; y++)
                 {
-                    Vector2 d = new Vector2(x, y) / new Vector2(Width, Height) * 2.0f - new Vector2(1.0f);
+                    var d = new Vector2(x, y) / new Vector2(Width, Height) * 2.0f - new Vector2(1.0f);
 
-                    PrimeEngine.Ray ray = new PrimeEngine.Ray
+                    var ray = new PrimeEngine.Ray
                     {
                         origin = Camera.Position,
                         tmin = 1e-4f,

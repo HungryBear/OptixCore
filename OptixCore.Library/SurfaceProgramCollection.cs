@@ -1,7 +1,7 @@
 ﻿namespace OptixCore.Library
 {
     /// <summary>
-    /// A collection of <see cref="SurfaceProgram">SurfacePrograms</see>. Allows one to iterate through the SurfacePrograms contained by a Material.
+    /// A collection of <see cref="SurfaceProgram">SurfacePrograms</see>. Allows one to iterate through the SurfacePrograms contained by a DefaultMaterial.
     /// </summary>
     public class SurfaceProgramCollection
     {

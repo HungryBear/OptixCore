@@ -107,7 +107,7 @@ namespace OptixCore.Library.Prime
             {
                 var memory = new Memory<T>(data);
                 var mh = memory.Pin();
-                CudaRunTimeApi.CudaCall(CudaRunTimeApi.cudaMemcpy(_dataPointer.ToPointer(), new IntPtr(mh.Pointer), (uint)(data.Length * Unsafe.SizeOf<T>()), CudaMemCpyKind.cudaMemcpyDeviceToHost));
+                CudaRunTimeApi.CudaCall(CudaRunTimeApi.cudaMemcpy(_dataPointer.ToPointer(), new IntPtr(mh.Pointer), (uint)(data.Length * Unsafe.SizeOf<T>()), CudaMemCpyKind.cudaMemcpyHostToDevice));
                 mh.Dispose();
             }
         }

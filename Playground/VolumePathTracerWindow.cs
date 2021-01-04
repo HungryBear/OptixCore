@@ -51,7 +51,7 @@ namespace Playground
             /*-----------------------------------------------
              * Load the geometry
              *-----------------------------------------------*/
-            var model = new OptixOBJLoader(modelPath, OptixContext, null, material);
+            var model = new OptixOBJLoader(modelPath, OptixContext, null, material, n=>null);
             model.GeoGroup = new GeometryGroup(OptixContext);
             model.ParseNormals = false;
             model.GenerateNormals = false;

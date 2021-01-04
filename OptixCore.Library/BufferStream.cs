@@ -182,6 +182,7 @@ namespace OptixCore.Library
 
             var buffSpan = new Span<T>(buffer, offset, numElems);
             MemoryHelper.CopyFromUnmanaged(new IntPtr(this.Buffer.ToInt64() + mPosition), ref buffSpan, (uint)sizeInBytes);
+            
 
             mPosition += sizeInBytes;
         }

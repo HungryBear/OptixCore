@@ -9,9 +9,7 @@ using OptixCore.Library.Scene;
 
 namespace Playground
 {
-    using Program = OptixProgram;
-
-   public class PathTracerWindow : OptixWindow
+    public class PathTracerWindow : OptixWindow
     {
         private uint mFrame = 0;
 
@@ -21,7 +19,7 @@ namespace Playground
         public PathTracerWindow() : base(800, 600)
         {
             UseSRGB = true;
-            UsePBO = false;
+            UsePBO = true;
 
         }
 
@@ -43,15 +41,22 @@ namespace Playground
             /*-----------------------------------------------
              * Create the material that will be executed when there is an intersection
              *-----------------------------------------------*/
-            var material = new Material(OptixContext);
-            Console.WriteLine("Shader path = " +shaderPath);
-            material.Programs[0] = new SurfaceProgram(OptixContext, RayHitType.Closest, shaderPath, "diffuse");
-            material.Programs[1] = new SurfaceProgram(OptixContext, RayHitType.Any, shaderPath, "shadow");
+            Material CreateMaterial(string h, string a)
+            {
+                var newMat = new Material(OptixContext);
+                Console.WriteLine("Shader path = " + shaderPath);
+                newMat.Programs[0] = new SurfaceProgram(OptixContext, RayHitType.Closest, shaderPath, h);
+                newMat.Programs[1] = new SurfaceProgram(OptixContext, RayHitType.Any, shaderPath, a);
+                return newMat;
+            }
+
+            var material = CreateMaterial("diffuse", "shadow");
+            var glass = CreateMaterial("specular", "shadow");
 
             /*-----------------------------------------------
              * Load the geometry
              *-----------------------------------------------*/
-            var model = new OptixOBJLoader(modelPath, OptixContext, null, material);
+            var model = new OptixOBJLoader(modelPath, OptixContext, null, material, n => n.Equals("01___Default") ? glass : null);
             model.GeoGroup = new GeometryGroup(OptixContext);
             model.ParseNormals = false;
             model.GenerateNormals = false;
@@ -149,7 +154,7 @@ namespace Playground
             Camera.TranslationVel = 100.0f;
 
             Camera.CenterOnBoundingBox(box, .95f);
-            
+
             CameraUpdate();
         }
 

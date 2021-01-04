@@ -14,27 +14,30 @@ namespace OptixCore.PrimeSample
     {
         static void Main(string[] args)
         {
-            //using (var ctx = new PrimeContext())
-            //{
-            //    Console.WriteLine("Context is created");
-            //    Simple(ctx);
-            //}
+         /*   using (var context = new PrimeContext(true))
+                Simple(context);*/
+
+         IntersectionTest();
+        }
+
+        private static void IntersectionTest()
+        {
             ICamera Camera;
             int Width = 320, Height = 200;
 
             Camera = new Camera();
-            Camera.Aspect = (float)Width / (float)Height;
+            Camera.Aspect = (float) Width / (float) Height;
             Camera.Fov = 30;
             Camera.RotationVel = 100.0f;
             Camera.TranslationVel = 500.0f;
 
             //sibenik camera position
             //Camera.LookAt(new Vector3(-19.5f, -10.3f, .8f), new Vector3(0.0f, -13.3f, .8f), Vector3.UnitY);
-            
-            
+
+
             PrimeEngine.Ray[] CreateRays()
             {
-                PrimeEngine.Ray[] rays = new PrimeEngine.Ray[Width * Height];
+                var rays = new PrimeEngine.Ray[Width * Height];
 
                 for (int x = 0; x < Width; x++)
                 {
@@ -57,9 +60,9 @@ namespace OptixCore.PrimeSample
                 return rays;
             }
 
-            using (var engine = new PrimeEngine(RayFormat.OriginDirectionMinMaxInterleaved, RayHitType.Closest))
+            using (var engine = new PrimeEngine(RayFormat.OriginDirectionMinMaxInterleaved, RayHitType.Closest, RTPBufferType.CudaLinear, false))
             {
-                var modelName = "cornell-box.obj";
+                var modelName = "teapot.obj";
                 var modelPath = Path.GetFullPath(@"..\..\..\..\Assets\Models\" + modelName);
                 var model = new OBJLoader(modelPath);
 
@@ -75,14 +78,14 @@ namespace OptixCore.PrimeSample
 
                 model.Positions.CopyTo(verts);
                 model.Groups[0].VIndices.CopyTo(tris);
-                var indexes = tris.SelectMany(c => new[] { c.X, c.Y, c.Z }).ToArray();
+                var indexes = tris.SelectMany(c => new[] {Math.Abs(c.X), Math.Abs(c.Y), Math.Abs(c.Z)}).ToArray();
                 Console.WriteLine("Setting Mesh");
                 engine.SetMesh(verts, indexes);
                 Console.WriteLine("Setting Rays");
                 engine.SetRays(CreateRays());
                 Console.WriteLine("Querying Prime");
                 var hits = engine.Query();
-                Console.WriteLine($"Successful hits {hits.Count(p=>p.t < 1e34f && p.t > 1e-4f)}");
+                Console.WriteLine($"Successful hits {hits.Count(p => p.t < 1e34f && p.t > 1e-4f)}");
             }
         }
 
@@ -97,8 +100,9 @@ namespace OptixCore.PrimeSample
             int[] indices = { 0, 2, 1 };
 
             var vertexBuffer = ctx.CreateBuffer(RTPBufferType.Host, RtpBufferFormat.VERTEX_FLOAT3, vertices);
-
+            vertexBuffer.SetRange(0, 3);
             var indexBuffer = ctx.CreateBuffer(RTPBufferType.Host, RtpBufferFormat.IndicesInt3, indices);
+            indexBuffer.SetRange(0, 1);
             using (var model = new PrimeModel(ctx))
             {
                 model.SetTriangles(indexBuffer, vertexBuffer);

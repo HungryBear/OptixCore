@@ -162,7 +162,7 @@ namespace Playground
             }
             else
             {
-                BufferStream stream = OutputBuffer.Map();
+                var stream = OutputBuffer.Map();
 
                 PixelType type = 0;
                 PixelFormat format = 0;
@@ -405,7 +405,7 @@ namespace Playground
             {
                 size = 128;
             }
-            Gl.BufferData(BufferTarget.ArrayBuffer, new IntPtr(size * Width * Height), IntPtr.Zero, BufferUsageHint.StreamDraw);
+            Gl.BufferData(BufferTarget.ArrayBuffer, new IntPtr(size * Width * Height), new byte[size*Width*Height],BufferUsageHint.StreamDraw);
             Gl.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
             return pbo;

@@ -36,7 +36,7 @@ namespace Playground
             //mTraversal.NumCpuThreads = Context.CpuNumThreads;
 
 
-            var model = new OptixOBJLoader(modelPath, OptixContext, null, null);
+            var model = new OptixOBJLoader(modelPath, OptixContext, null, null, n=>null);
 
             //OBJLoader normally automatically creates Geometry, GeometryInstances, and GeometryGroups for Optix
             //but the Traversal API doesn't use that, so turn that off

@@ -274,3 +274,13 @@ __pycache__/
 /OptixScripts/ScriptOutput/parallelogram.cu.ptx
 /OptixScripts/ScriptOutput/draw_texture.cu.ptx
 /OptixScripts/ScriptOutput/box.cu.ptx
+/OptixScripts/ScriptOutput/denoiser.cu.ptx
+/OptixScripts/ScriptOutput/path_tracer.cu.ptx
+/OptixScripts/ScriptOutput/triangle_mesh.cu.ptx
+/OptixScripts/ScriptOutput/triangle_mesh_interleaved.cu.ptx
+/OptixScripts/ScriptOutput/triangle_mesh_iterative.cu.ptx
+/OptixScripts/ScriptOutput/path_tracer.cu.ptx
+/OptixScripts/ScriptOutput/triangle_mesh.cu.ptx
+/OptixScripts/ScriptOutput/triangle_mesh_interleaved.cu.ptx
+/OptixScripts/ScriptOutput/triangle_mesh_iterative.cu.ptx
+/OptixScripts/ScriptOutput/vpt.cu.ptx

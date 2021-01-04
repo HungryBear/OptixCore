@@ -8,13 +8,14 @@ namespace OptixCore.Library.Scene
 {
     public class OptixOBJLoader : OBJLoader
     {
+        private readonly Func<string, Material> _materialResolveFunc;
         public string IntersecitonProgPath { get; set; }
         public string IntersecitonProgName { get; set; }
         public string BoundingBoxProgPath { get; set; }
         public string BoundingBoxProgName { get; set; }
 
         public Context Context { get; set; }
-        public Material Material { get; set; }
+        public Material DefaultMaterial { get; set; }
         public GeometryGroup GeoGroup { get; set; }
 
         public AccelBuilder Builder { get; set; }
@@ -22,12 +23,13 @@ namespace OptixCore.Library.Scene
 
         private bool dataLoaded;
 
-        public OptixOBJLoader(string filename, Context context, GeometryGroup geoGroup, Material material)
+        public OptixOBJLoader(string filename, Context context, GeometryGroup geoGroup, Material defaultMaterial, Func<string, Material> materialResolveFunc)
             : base(filename)
         {
+            _materialResolveFunc = materialResolveFunc;
             Context = context;
             GeoGroup = geoGroup;
-            Material = material;
+            DefaultMaterial = defaultMaterial;
 
             Builder = AccelBuilder.Sbvh;
             Traverser = AccelTraverser.Bvh;
@@ -123,7 +125,7 @@ namespace OptixCore.Library.Scene
                 //create a geometry instance
                 GeometryInstance instance = new GeometryInstance(Context);
                 instance.Geometry = geometry;
-                instance.AddMaterial(Material);
+                instance.AddMaterial(_materialResolveFunc(group.mtrl) ??DefaultMaterial);
 
                 if (group.mtrl != null)
                 {
